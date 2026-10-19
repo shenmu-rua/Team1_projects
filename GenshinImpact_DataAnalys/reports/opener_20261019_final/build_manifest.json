@@ -1,0 +1,233 @@
+{
+  "video_version": "1.0.0",
+  "duration_seconds": 40,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "scenes": [
+    [
+      0,
+      4,
+      "片头"
+    ],
+    [
+      4,
+      10,
+      "主分析记录规模"
+    ],
+    [
+      10,
+      16,
+      "卡池构成"
+    ],
+    [
+      16,
+      23,
+      "月度峰值"
+    ],
+    [
+      23,
+      29,
+      "账号记录量"
+    ],
+    [
+      29,
+      35,
+      "五星原始名称"
+    ],
+    [
+      35,
+      40,
+      "答辩标题"
+    ]
+  ],
+  "dataset": 3,
+  "source_config": "3cee80f4",
+  "source_ads_sha256": "8b46a397333b1bd893c77f2d2dc0f8c9992e827921b0baa7fa25f4d7a2549f9f",
+  "background_sha256": "4fe4a81988eca1721f707c7a4ef11e8e2d660e2640a5e965fc066e0221dd404a",
+  "background_generation": "imagegen built-in tool",
+  "background_prompt": "Create a cinematic widescreen 16:9 background plate for an elegant Chinese academic data-analysis opening film about Genshin gacha records. Use case: abstract fantasy cosmic environment / motion-design background, NOT an infographic. Rich near-black midnight indigo space, sweeping delicate champagne-gold and ice-blue meteor trails along the lower third and outer edges, tiny luminous star dust, subtle violet nebula volume, a large elegant luminous wish-like streak travelling diagonally into the distance. Premium blockbuster title-sequence quality, beautiful volumetric light and refined restrained gold, dimensional depth, sharp fine details, no cartoon. Reserve the broad central 70% of the image as very dark, calm negative space for large data typography and charts to be added later. Left-center must especially remain dark and uncluttered. No text, letters, numbers, logos, icons, data charts, interface panels, people, recognizable characters, or watermark. Full bleed 3840x2160 composition if possible.",
+  "music": "Original local synthesis; no voice or external samples",
+  "metrics": {
+    "pulls": 15598804,
+    "people": 16289,
+    "first": "2020-12-03",
+    "last": "2022-07-26",
+    "median": 744,
+    "roleShare": 66.10025358354397,
+    "pools": [
+      {
+        "name": "角色活动祈愿",
+        "count": 10310849,
+        "pool": 301
+      },
+      {
+        "name": "武器活动祈愿",
+        "count": 2839412,
+        "pool": 302
+      },
+      {
+        "name": "常驻祈愿",
+        "count": 2336423,
+        "pool": 200
+      },
+      {
+        "name": "新手祈愿",
+        "count": 112120,
+        "pool": 100
+      }
+    ],
+    "months": [
+      {
+        "month": "2020-12",
+        "count": null
+      },
+      {
+        "month": "2021-01",
+        "count": null
+      },
+      {
+        "month": "2021-02",
+        "count": 18023
+      },
+      {
+        "month": "2021-03",
+        "count": 40552
+      },
+      {
+        "month": "2021-04",
+        "count": 50710
+      },
+      {
+        "month": "2021-05",
+        "count": 61224
+      },
+      {
+        "month": "2021-06",
+        "count": 73733
+      },
+      {
+        "month": "2021-07",
+        "count": 175410
+      },
+      {
+        "month": "2021-08",
+        "count": 217304
+      },
+      {
+        "month": "2021-09",
+        "count": 834424
+      },
+      {
+        "month": "2021-10",
+        "count": 332317
+      },
+      {
+        "month": "2021-11",
+        "count": 942508
+      },
+      {
+        "month": "2021-12",
+        "count": 634643
+      },
+      {
+        "month": "2022-01",
+        "count": 1813296
+      },
+      {
+        "month": "2022-02",
+        "count": 1096588
+      },
+      {
+        "month": "2022-03",
+        "count": 1500086
+      },
+      {
+        "month": "2022-04",
+        "count": 844104
+      },
+      {
+        "month": "2022-05",
+        "count": 604184
+      },
+      {
+        "month": "2022-06",
+        "count": 592166
+      },
+      {
+        "month": "2022-07",
+        "count": 472538
+      }
+    ],
+    "peak": {
+      "month": "2022-01",
+      "count": 1813296
+    },
+    "bins": [
+      {
+        "lo": 1,
+        "hi": 100,
+        "count": 209
+      },
+      {
+        "lo": 101,
+        "hi": 300,
+        "count": 1327
+      },
+      {
+        "lo": 301,
+        "hi": 600,
+        "count": 4192
+      },
+      {
+        "lo": 601,
+        "hi": 1000,
+        "count": 5538
+      },
+      {
+        "lo": 1001,
+        "hi": 2000,
+        "count": 3899
+      },
+      {
+        "lo": 2001,
+        "hi": 5000,
+        "count": 972
+      },
+      {
+        "lo": 5001,
+        "hi": null,
+        "count": 152
+      }
+    ],
+    "items": [
+      {
+        "name": "雷电将军",
+        "count": 16824
+      },
+      {
+        "name": "莫娜",
+        "count": 15003
+      },
+      {
+        "name": "迪卢克",
+        "count": 14865
+      },
+      {
+        "name": "刻晴",
+        "count": 14788
+      },
+      {
+        "name": "七七",
+        "count": 14767
+      }
+    ]
+  },
+  "code_sha256": {
+    "opener.py": "7c34a4c4898078dab0aeb1a58bbf85a869036ec7ae487e1f95942cf9a3fc157d",
+    "score.py": "6e35075830c0f73f6e2b893899b867894b44f76223aaf589c392ba01050100a3",
+    "opener.html": "bc2215c00abbc644c73141de08660739813637744ba38dbc32dc010886e85297",
+    "render_opener.cjs": "55bdfc2fb270917c2124fed2464b09d66ee6844cb3243918372fb24f6dd2c849",
+    "opener_player.html": "a9754fa50a7abba59235f3e67c3a9c34b006e0acfe28e9204633200a17fec40b"
+  }
+}
