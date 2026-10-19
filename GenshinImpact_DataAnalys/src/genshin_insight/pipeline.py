@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-import os
 import sqlite3
+import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -134,10 +134,10 @@ def clean_database(
             raise RuntimeError("处理期间源库文件元信息变化；不发布产物。")
         announce("publish")
         # Windows 的 rename 拒绝已有目标；其他平台用硬链接保证不覆盖。
-        if os.name == "nt":
+        if sys.platform == "win32":
             temporary.rename(output_path)
         else:
-            os.link(temporary, output_path)
+            output_path.hardlink_to(temporary)
             temporary.unlink()
         report["elapsed_seconds"] = round(time.monotonic() - started, 2)
         report["database"] = str(output_path)

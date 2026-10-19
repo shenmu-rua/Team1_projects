@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
@@ -31,8 +32,21 @@ def finish(fig, title: str, subtitle: str, source: str, **options) -> float:
         raise ValueError("标题必须非空且不超过 40 字。")
     if not source.strip():
         raise ValueError("来源行必须说明数据来源、脚本和配置版本。")
-    options.setdefault("accent", True)
-    return load_theme().finish(fig, title, subtitle, source, **options)
+    engine = load_theme()
+    accent = options.pop("accent", True)
+    bottom = engine.finish(fig, title, subtitle, source, accent=False, **options)
+    if accent:
+        fig.add_artist(
+            engine.Rectangle(
+                (options.get("x0", 0.075), 0.978),
+                0.38 / fig.get_figwidth(),
+                0.055 / fig.get_figheight(),
+                transform=fig.transFigure,
+                facecolor=engine.MAIN,
+                edgecolor="none",
+            )
+        )
+    return bottom
 
 
 def sequential_cmap():
@@ -43,10 +57,16 @@ def sequential_cmap():
     )
 
 
-def save(fig, path: str | Path) -> Path:
+def save(fig, path: str | Path, *, ppt: bool = False) -> Path:
     """先检查规范，再以 200 dpi 保存；不会读取数据库。"""
     if not getattr(fig, "_dsh_source", ""):
         raise ValueError("保存前必须通过 viz.finish() 添加来源行。")
+    if not re.search(r"\d", getattr(fig, "_dsh_title", "")):
+        raise ValueError("图表标题必须包含由聚合计算的数字。")
+    width, height = fig.get_size_inches()
+    if ppt and abs(width / height - 16 / 9) > 1e-6:
+        raise ValueError("本图集画布必须严格为16:9。")
+    fig.canvas.draw()
     checker = import_module("theme.spec_check")
     checker.lint_figure(fig, strict=True)
     return load_theme().save(fig, path=path, dpi=config.FIGURE_DPI)

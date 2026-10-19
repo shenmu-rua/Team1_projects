@@ -67,6 +67,15 @@ with patch.object(sqlite3, 'connect', denied), patch.object(Path, 'open', denied
     import genshin_insight.schema
     import genshin_insight.viz
     import genshin_insight.__main__
+    import genshin_insight.ads
+    import genshin_insight.charts
+    import genshin_insight.defense
+    import genshin_insight.speech
+    import genshin_insight.opener
+    import genshin_insight.score
+    import genshin_insight.report
+    import genshin_insight.viz.report_plots
+    import genshin_insight.viz.plots
     import theme
 assert not any(name.startswith('matplotlib') for name in sys.modules)
 """

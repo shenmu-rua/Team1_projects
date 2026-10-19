@@ -3,7 +3,7 @@
 本项目根目录为 `GenshinImpact_DataAnalys/`。上一级 `Team1_projects/` 是容纳多个项目的父目录；
 本项目的说明、规范、代码、配置、数据和生成文件统一保存在当前目录内。
 
-当前版本 `0.2.0` 支持本地清洗。明细由本地程序处理，模型、控制台和报告只接收结构、阶段及聚合稽核；
+清洗版本 `0.2.0`、图表配置 `0.3.0`。明细由本地程序处理，模型、控制台和报告只接收结构、阶段及受保护聚合；
 不显示明细行、UID、抽卡 ID 或原始 JSON。原始库只读，清洗结果保存在本项目 `data/` 的独立新库。
 
 ## 先读什么
@@ -13,6 +13,7 @@
 3. [蓝粉主题 skill](theme/SKILL.md)。
 4. [结构字典](docs/数据字典.md)及[初始化记录与后续计划](docs/项目初始化.md)。
 5. [数据清洗规则](docs/数据清洗.md)：当前清洗口径、运行方式、产物与限制。
+6. [图表制作说明](docs/图表制作.md)：分析范围、完整制作入口、保护措施与图集口径。
 
 `docs/` 原有文档包含信令项目案例，仅作为工程和图表参考；不构成原神数据结论。
 
@@ -31,8 +32,11 @@ GenshinImpact_DataAnalys/
 │   ├── dws.py                  # 从本次清洗结果重建汇总
 │   ├── quality.py              # 聚合对账和报告
 │   ├── pipeline.py             # 运行调度与产物发布
-│   ├── __main__.py             # schema / clean 子命令
+│   ├── ads.py                  # 分析聚合与小样本保护
+│   ├── charts.py               # 图集制作调度
+│   ├── __main__.py             # schema / clean / charts 子命令
 │   └── viz/                   # 蓝粉主题适配和保存前自检
+├── make_charts.py              # 六行本地 import 制图入口
 ├── theme/                      # 已有主题引擎与规范自检，保持单一来源
 ├── docs/                       # 规范、结构字典与阶段记录
 ├── test/{unit,contract}/        # 临时空表与合成记录，不连真实库
@@ -65,6 +69,7 @@ python -m genshin_insight schema
 python -m genshin_insight schema --format json
 python -m genshin_insight schema --database .\gacha_db\genshin_gacha.db
 python -m genshin_insight clean
+python -m genshin_insight charts
 ```
 
 无参数和帮助命令均不打开数据库。`schema` 使用 `mode=ro`、`query_only` 和 SQL 授权器，
@@ -82,25 +87,68 @@ $env:PYTHONPATH = 'src;.'
 python -m genshin_insight --help
 ```
 
-## 后续绘图入口
+## 制作分析图集
 
-清洗已经接入；正式出图前还需建立含小样本抑制的 ADS，并处理类型编码待复核范围。
-未来绘图显式调用主题，不在 import 时应用：
+安装依赖后，在本目录运行：
 
-```python
-from genshin_insight import viz
-
-fonts = viz.apply_theme(width_in=16)
-theme = viz.load_theme()
-fig = theme.canvas("ppt", width_in=16, height_in=9)
-
-# title_number 由届时获准的聚合过程计算；subtitle 必须说明统计口径。
-# top = viz.finish(fig, f"结论包含 {title_number:,} 个记录", subtitle,
-#                  theme.source_line(source_name, script_name, config_version))
-# ax = theme.axes(fig, top=top)
-# 在此绘制获准的聚合结果，颜色取自 theme 的语义常量。
-# 连续数值使用 viz.sequential_cmap()；模拟数据须 theme.watermark(fig)。
-# viz.save(fig, "image/A01_中文主题.png")  # 自检通过后以 200 dpi 保存
+```powershell
+python make_charts.py
+# 或显式指定清洗库；输出目录必须尚不存在且位于本项目内部
+python make_charts.py --database .\data\genshin_clean_<运行编号>.db --output .\image\my_analysis
 ```
 
-当前未运行 notebook 或生成真实数据图。时间时区、物品类型编码和多语言名称的限制见清洗规则。
+未安装本地包时先设置 `$env:PYTHONPATH = 'src;.'`。也可在 Python 中直接调用：
+
+```python
+from genshin_insight.charts import generate
+
+output = generate()  # 默认选择本项目最新清洗库、主分析数据集03
+```
+
+入口通过本地 `import` 复用聚合、绘图和主题，使用 `pathlib` 管理文件，不引入 `os`。
+一次生成八张16:9、200 dpi的PNG，以及 `ads.json`、`manifest.json`、`分析报告.md`，
+位于 `image/analysis_<运行编号>/`。每张图保存前执行主题自检，没有双Y轴。
+主分析固定来源口径；小样本在ADS层保护；时间、名称、概率与记录完整性的限制直接写在图上。
+
+## HTML汇报答辩
+
+安装 `.[analysis,viz,presentation]` 后，从已有图集制作离线演示：
+
+```powershell
+python make_defense.py --analysis .\image\analysis_20261019_final
+```
+
+入口通过本地 `import` 调用 `genshin_insight.defense.build()`，只读取受保护ADS与清洗聚合稽核，
+不连接数据库。生成32页16:9单文件HTML、逐页讲稿和构建清单，放在本项目 `reports/defense_<运行时间>/`。
+HTML内嵌七张SVG与开源字体子集，可以单独复制后离线打开。分析报告和答辩已移除Q01数据集范围章节。
+
+方向键或空格翻页，`O`打开目录，`N`查看当前页讲稿，`F`全屏，`H`隐藏工具栏；支持打印为PDF。
+图表页与解读页配对，覆盖项目流程、清洗实现、ADS保护、蓝粉主题和每张图的统计含义。
+
+讲稿按32页一一对应，可直接口播，包含开场、解释、翻页过渡和结束致谢；首次出现时解释术语，文末附速查表。
+第32页只显示THANKS。Q1～Q4表示按账号抽数划分的四组；组内P25/P50/P75与IQR另行解释。
+需要按最新内容更新已有答辩目录时显式使用：
+
+```powershell
+python make_defense.py --analysis .\image\analysis_20261019_final --output .\reports\defense_20261019_final --replace
+```
+
+## 答辩开场视频
+
+`reports/opener_20261019_final/开场视频.mp4` 为40秒、1920×1080、30fps的H.264/AAC短片，
+含原创电子配乐。用户允许片头自由发挥主题，采用深色星空与金色强调，依次展示主分析记录规模、
+卡池构成、月度峰值、账号记录量和五星原始名称榜。所有数字来自既有受保护ADS，不连接数据库。
+
+打开同目录 `index.html`，点击“播放开场”，视频结束后自动进入现有32页答辩，也可跳过片头。
+此入口与 `defense_20261019_final/` 保持相邻；MP4可独立播放。`motion.html` 是可回放、定位的动画母版。
+
+安装 `.[analysis,viz,presentation,motion]`、本地Node.js的 `playwright` 包及Chrome后，在本项目运行：
+
+```powershell
+python make_opener.py --background .\reports\opener_20261019_final\assets\cosmic-background.png --output .\reports\opener_new
+```
+
+源码通过本地import组织：`opener.py`负责聚合选取和发布，`score.py`生成原创音轨，
+`viz/opener.html`负责确定性的逐帧动画，`viz/render_opener.cjs`用本地Chrome/WebCodecs编码并由FFmpeg封装。
+可通过 `--ffmpeg`、`--node` 指定可执行文件；`--prepare-only`只生成动画母版和音轨。
+如Node包未安装在项目 `node_modules/`，运行前用 `NODE_PATH` 指向已有包目录。

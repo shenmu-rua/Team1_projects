@@ -14,7 +14,7 @@ from .schema import inspect_schema, render_dictionary
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="原神项目工具：结构检查与本地清洗。")
+    parser = argparse.ArgumentParser(description="原神项目工具：结构检查、本地清洗与图表。")
     commands = parser.add_subparsers(dest="command")
     schema_parser = commands.add_parser("schema", help="只读表名及列结构，禁止业务查询")
     schema_parser.add_argument("--database", type=Path, default=config.DB_PATH)
@@ -22,9 +22,19 @@ def main(argv: list[str] | None = None) -> int:
     clean_parser = commands.add_parser("clean", help="只读源库，清洗并生成独立结果及聚合报告")
     clean_parser.add_argument("--database", type=Path, default=config.DB_PATH)
     clean_parser.add_argument("--output", type=Path)
+    charts_parser = commands.add_parser("charts", help="从清洗库生成受保护ADS与蓝粉分析图集")
+    charts_parser.add_argument("--database", type=Path)
+    charts_parser.add_argument("--output", type=Path)
+    charts_parser.add_argument("--dataset", type=int, default=3)
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()
+        return 0
+    if args.command == "charts":
+        from .charts import generate
+
+        output = generate(args.database, args.output, args.dataset)
+        print(json.dumps({"output": str(output), "figures": 8}, ensure_ascii=False))
         return 0
     if args.command == "clean":
         output = (args.output or default_output_path()).resolve()
