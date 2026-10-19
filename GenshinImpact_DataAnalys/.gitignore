@@ -1,0 +1,40 @@
+# Local data and outputs: never inspect or commit during initialization.
+/data/
+/image/
+/reports/
+.ipynb_checkpoints/
+
+# Local datasets and numerical arrays.
+*.csv
+*.tsv
+*.parquet
+*.npy
+*.npz
+/GI_gacha_dataset-main/GI_gacha_dataset_03/*.json
+
+# Local databases and import report.
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+/gacha_db/import_report.json
+
+# Original archives, including split archives.
+*.zip
+*.zip.*
+*.7z
+*.7z.*
+*.rar
+*.tar
+*.gz
+*.bz2
+*.xz
+
+# Build and tooling artifacts.
+*.egg-info/
+/build/
+/dist/
+.ruff_cache/
+
