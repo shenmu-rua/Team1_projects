@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "genshin-insight"
-version = "0.1.0"
-description = "原神抽卡分析工程；初始化阶段仅允许检查表结构"
+version = "0.2.0"
+description = "原神抽卡本地清洗、聚合稽核与可视化工程"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []

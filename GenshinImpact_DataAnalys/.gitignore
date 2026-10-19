@@ -1,16 +1,29 @@
-# Local data and outputs: never inspect or commit during initialization.
+# Raw data, cleaning runs, generated figures and reports stay local.
 /data/
 /image/
 /reports/
+/outputs/
+/artifacts/
 .ipynb_checkpoints/
+
+# Original dataset folders may contain account identifiers in paths.
+/GI_gacha_dataset-main/GI_gacha_dataset_02/
+/GI_gacha_dataset-main/GI_gacha_dataset_03/
 
 # Local datasets and numerical arrays.
 *.csv
 *.tsv
 *.parquet
+*.feather
+*.arrow
 *.npy
 *.npz
-/GI_gacha_dataset-main/GI_gacha_dataset_03/*.json
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.jsonl
+*.ndjson
 
 # Local databases and import report.
 *.db
@@ -19,7 +32,21 @@
 *.sqlite3
 *.sqlite-*
 *.sqlite3-*
-/gacha_db/import_report.json
+*.db3
+*.db3-*
+*.duckdb
+*.duckdb.wal
+/gacha_db/import_report*.json
+/gacha_db/import_report*.md
+
+# Interrupted cleaning runs, SQLite scratch files and execution logs.
+*.partial
+*.partial-*
+*.tmp
+*.temp
+*.log
+etilqs_*
+.sqlite_temp_*/
 
 # Original archives, including split archives.
 *.zip
@@ -31,10 +58,22 @@
 *.gz
 *.bz2
 *.xz
+*.tgz
+*.tbz2
+*.txz
+*.zst
+*.lz4
 
 # Build and tooling artifacts.
 *.egg-info/
+*.egg
+*.whl
 /build/
 /dist/
 .ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+/htmlcov/
+.hypothesis/
 

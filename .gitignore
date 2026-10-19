@@ -5,6 +5,9 @@ __pycache__/
 venv/
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
 
 # Local credentials and editor settings
 .env
@@ -15,30 +18,4 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Local datasets and numerical arrays
-*.csv
-*.tsv
-*.parquet
-*.npy
-*.npz
-/GenshinImpact_DataAnalys/GI_gacha_dataset-main/GI_gacha_dataset_03/*.json
-
-# Generated databases and import report
-*.db
-*.db-*
-*.sqlite
-*.sqlite3
-*.sqlite-*
-*.sqlite3-*
-/GenshinImpact_DataAnalys/gacha_db/import_report.json
-
-# Archives, including split archives
-*.zip
-*.zip.*
-*.7z
-*.7z.*
-*.rar
-*.tar
-*.gz
-*.bz2
-*.xz
+# Dataset, database, archive and output rules belong to each project.
