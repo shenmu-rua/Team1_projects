@@ -86,10 +86,10 @@ class TemplateReport:
         rpr.append(
             self.element(
                 "w:rFonts",
-                ascii="TeX Gyre Termes",
-                hAnsi="TeX Gyre Termes",
+                ascii="TeXGyreTermes",
+                hAnsi="TeXGyreTermes",
                 eastAsia="Noto Serif CJK SC",
-                cs="TeX Gyre Termes",
+                cs="TeXGyreTermes",
             )
         )
         if size is not None:
@@ -170,6 +170,7 @@ class TemplateReport:
                     if el is not tcpr:
                         cell.remove(el)
                 paragraph = self.content(deepcopy(source_cell.find("w:p", NS)), value, 10.5, i == 0)
+                self.child(self.child(paragraph, "w:pPr"), "w:keepNext", val="1" if i == 0 else "0")
                 self.child(
                     self.child(paragraph, "w:pPr"),
                     "w:jc",
@@ -182,7 +183,10 @@ class TemplateReport:
                 tr.append(cell)
             table.append(tr)
         self.body.append(table)
-        self.p("", size=3)
+        spacer = self.p("", size=3)
+        self.child(
+            self.child(spacer, "w:pPr"), "w:spacing", line=80, lineRule="exact", before=0, after=80
+        )
         return table
 
     def figure(self, path: Path, caption: str):
@@ -322,10 +326,10 @@ class TemplateReport:
             for fonts in root.findall(".//w:rFonts", NS):
                 fonts.attrib.clear()
                 for key, value in {
-                    "ascii": "TeX Gyre Termes",
-                    "hAnsi": "TeX Gyre Termes",
+                    "ascii": "TeXGyreTermes",
+                    "hAnsi": "TeXGyreTermes",
                     "eastAsia": "Noto Serif CJK SC",
-                    "cs": "TeX Gyre Termes",
+                    "cs": "TeXGyreTermes",
                 }.items():
                     fonts.set(f"{{{NS['w']}}}{key}", value)
             for shade in root.findall(".//w:rPr/w:shd", NS):
@@ -344,7 +348,7 @@ class TemplateReport:
         fonts = self.etree.fromstring(self.parts["word/fontTable.xml"])
         for el in list(fonts):
             fonts.remove(el)
-        for name in ["Noto Serif CJK SC", "TeX Gyre Termes"]:
+        for name in ["Noto Serif CJK SC", "TeXGyreTermes"]:
             fonts.append(self.element("w:font", name=name))
         self.parts["word/fontTable.xml"] = self.xml(fonts)
         core = self.etree.fromstring(self.parts["docProps/core.xml"])
@@ -361,6 +365,89 @@ class TemplateReport:
 
     def xml(self, root):
         return self.etree.tostring(root, encoding="UTF-8", xml_declaration=True, standalone=True)
+
+
+def adopt_word_fields(document: Path, refreshed: Path, *, pages: int) -> Path:
+    """只采用Word原生目录缓存和锚点，避免Word另存时丢弃未编辑模板部件。"""
+    from lxml import etree
+
+    manifest = document.parent / "build_manifest.json"
+    metadata = json.loads(manifest.read_text(encoding="utf-8"))
+    if metadata.get("template_sha256") != TEMPLATE_SHA256 or pages < 1:
+        raise ValueError("只允许更新本模板生成的报告。")
+    with ZipFile(document) as archive:
+        parts = {item.filename: archive.read(item.filename) for item in archive.infolist()}
+    with ZipFile(refreshed) as archive:
+        updated = etree.fromstring(archive.read("word/document.xml"))
+    root = etree.fromstring(parts["word/document.xml"])
+    original_sdt, updated_sdt = root.findall(".//w:sdt", NS), updated.findall(".//w:sdt", NS)
+    if len(original_sdt) != 1 or len(updated_sdt) != 1:
+        raise ValueError("报告应仅有一个目录控件。")
+    content = deepcopy(updated_sdt[0].find("w:sdtContent", NS))
+    targets = {
+        link.get(f"{{{NS['w']}}}anchor")
+        for link in content.findall(".//w:hyperlink", NS)
+        if link.get(f"{{{NS['w']}}}anchor")
+    }
+    if not targets:
+        raise ValueError("Word尚未生成有效目录。")
+    stale_ids = {
+        el.get(f"{{{NS['w']}}}id")
+        for el in root.findall(".//w:bookmarkStart", NS)
+        if el.get(f"{{{NS['w']}}}name") in targets
+    }
+    for tag in ("bookmarkStart", "bookmarkEnd"):
+        for el in root.findall(f".//w:{tag}", NS):
+            if el.get(f"{{{NS['w']}}}id") in stale_ids:
+                el.getparent().remove(el)
+    headings = root.findall("w:body/w:p", NS)
+    maximum_id = max(
+        [int(el.get(f"{{{NS['w']}}}id")) for el in root.findall(".//w:bookmarkStart", NS)] or [0]
+    )
+    found = set()
+    for bookmark in updated.findall(".//w:bookmarkStart", NS):
+        name = bookmark.get(f"{{{NS['w']}}}name")
+        if name not in targets:
+            continue
+        paragraph = bookmark.getparent()
+        title = "".join(paragraph.itertext())
+        matches = [p for p in headings if "".join(p.itertext()) == title]
+        if len(matches) != 1:
+            raise ValueError(f"目录锚点无法唯一匹配正文标题：{name}")
+        maximum_id += 1
+        start = deepcopy(bookmark)
+        start.set(f"{{{NS['w']}}}id", str(maximum_id))
+        end = etree.Element(f"{{{NS['w']}}}bookmarkEnd")
+        end.set(f"{{{NS['w']}}}id", str(maximum_id))
+        matches[0].insert(1 if matches[0].find("w:pPr", NS) is not None else 0, start)
+        matches[0].append(end)
+        found.add(name)
+    if found != targets:
+        raise ValueError("目录存在缺失的标题锚点。")
+    old_content = original_sdt[0].find("w:sdtContent", NS)
+    original_sdt[0].replace(old_content, content)
+    parts["word/document.xml"] = etree.tostring(
+        root, encoding="UTF-8", xml_declaration=True, standalone=True
+    )
+    settings = etree.fromstring(parts["word/settings.xml"])
+    settings.find("w:updateFields", NS).set(f"{{{NS['w']}}}val", "false")
+    parts["word/settings.xml"] = etree.tostring(
+        settings, encoding="UTF-8", xml_declaration=True, standalone=True
+    )
+    temporary = document.with_suffix(".docx.partial")
+    with ZipFile(temporary, "w", compression=ZIP_DEFLATED) as archive:
+        for name, value in parts.items():
+            archive.writestr(name, value)
+    temporary.replace(document)
+    metadata.update(
+        field_refresh="Microsoft Word native TOC and page-number update",
+        pages=pages,
+        toc_entries=len(targets),
+        document_sha256=hashlib.sha256(document.read_bytes()).hexdigest(),
+    )
+    metadata["code_sha256"]["report.py"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    manifest.write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+    return document
 
 
 def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, figures: list[Path]):
@@ -446,14 +533,14 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     h("1　报告概述", 1)
     h("1.1　编制目的")
     p(
-        "本报告用于项目汇报与答辩，说明原神抽卡记录如何经过只读清洗、质量稽核和受保护汇总，形成可复算的统计图表。评估既关注记录是否被正确处理，也关注字段语义、观察覆盖与样本选择对结论的限制。"
+        "本报告说明原神抽卡记录的只读清洗、质量稽核和受保护汇总过程，评价处理结果及字段语义、观察覆盖与样本选择对分析的影响。"
     )
     p(
-        f"清洗运行处理{m['input_pulls']:,}条输入，保留{m['kept_pulls']:,}条，13项工程稽核通过。主分析03含{scope['people']:,}个账号、{scope['pulls']:,}条留存记录。报告据此评价卡池构成、时间集中和分布特征，明确后续分析需要补充的证据。"
+        f"清洗处理{m['input_pulls']:,}条输入，保留{m['kept_pulls']:,}条，13项工程稽核通过。主分析03含{scope['people']:,}个账号、{scope['pulls']:,}条留存记录，用于描述卡池构成、时间集中和分布特征。"
     )
     h("1.2　评估依据与方法")
     p(
-        "本次沿用模板的完整性、规范性、唯一性、一致性、准确性、时效性和代表性维度，具体判定以项目清洗规则1.0.0及已发布ADS为依据。模板中的信令示例、数据量、地理判断和行业术语均不作为本项目证据；本报告不作外部标准认证声明。"
+        "沿用模板的完整性、规范性、唯一性、一致性、准确性、时效性和代表性七个维度，判定依据为项目清洗规则1.0.0及已发布ADS。模板案例不作为项目证据；本报告不作外部标准认证声明。"
     )
     table(
         ["结论", "判定含义", "使用要求"],
@@ -467,7 +554,7 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     )
     h("1.3　数据处理流程")
     p(
-        "原始SQLite以只读模式打开，先检查必要结构与关联，再在项目内的新库中完成基础校验、两层保守去重、冲突隔离与池内排序，形成DWD明细和DIM维表。DWS从本次明细重新汇总，ADS再执行小样本保护。制图、答辩与本报告复用同次发布聚合。"
+        "只读原始SQLite，在项目新库完成校验、去重、隔离与排序，形成DWD和DIM。DWS重新汇总，ADS执行小样本保护；图表、答辩与报告复用同次发布聚合。"
     )
     table(
         ["层或环节", "职责", "主要控制"],
@@ -484,11 +571,11 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     h("2　评估结论摘要", 1)
     h("2.1　总体结论")
     p(
-        "本报告登记20项质量评估，其中13项通过、7项警告、0项不通过。前13项为清洗程序的自动稽核；后7项为结合稽核事实和分析定义作出的质量评估，不计入程序执行检查数。总体判断为有条件使用。",
+        "20项质量评估中，13项通过、7项警告、0项不通过。前13项为自动稽核；后7项为报告质量评估，不计入程序检查数。总体判断为有条件使用。",
         bold=True,
     )
     p(
-        "工程层面的输入去向、汇总总量、序号与关联检查均满足既定断言。仍需保留的限制集中于类型编码、无时区时间、多语言名称、样本选择与观察历史。通过工程稽核说明处理过程自洽，并不能证明采样完整、字段含义完全可靠或样本可代表全部玩家。"
+        "输入去向、汇总、序号与关联检查均通过，说明处理过程自洽。类型编码、无时区时间、多语言名称、样本选择及观察历史仍有限制；工程对账不能证明采样完整或总体代表性。"
     )
     table(
         ["指标", "数值", "统计口径"],
@@ -670,10 +757,10 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
         (
             "7.6　记录内相邻五星间隔",
             "图 7-6　记录内已闭合五星间隔分布",
-            "间隔为同一账号池内相邻已记录五星的序号差；三个池分别归一为占比，稀疏尾部按各池条件合箱。",
-            f"角色池分析{sum(row['counts'][301] for row in data['gap_bins'][301]):,}段已闭合间隔，其中71至80抽箱占{100 * next(row['counts'][301] for row in data['gap_bins'][301] if row['lo'] == 71 and row['hi'] == 80) / sum(row['counts'][301] for row in data['gap_bins'][301]):.1f}%，中位数所在箱的上界为80抽。",
-            "首个五星之前的片段与未出现后继五星的尾段未计入；历史缺失无法被当前口径完全识别。",
-            "结果是留存记录内的闭合间隔分布，不能作为真实保底、首五星等待时间或官方机制证明。",
+            "同一账号池相邻已记录五星的序号差；各池独立归一，稀疏尾部按各池条件合箱。",
+            f"角色池{sum(row['counts'][301] for row in data['gap_bins'][301]):,}段中，71至80抽占{100 * next(row['counts'][301] for row in data['gap_bins'][301] if row['lo'] == 71 and row['hi'] == 80) / sum(row['counts'][301] for row in data['gap_bins'][301]):.1f}%；中位数所在箱上界为80抽。",
+            "排除首个五星前段和未闭合尾段，无法识别全部历史缺口。",
+            "仅描述记录内闭合间隔，不用于真实保底、首五星等待或官方机制推断。",
         ),
         (
             "7.7　五星原始名称记录榜",
@@ -729,16 +816,16 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     h("9　问题清单与整改建议", 1)
     h("9.1　问题登记")
     p(
-        "责任角色为建议分工，不代表来源方已经承诺整改。警告级别与问题关闭状态分别管理：已清除的重复仍保留质量发现，已披露的解释边界也不因工程对账通过而消失。"
+        "责任角色为建议分工，尚非来源方承诺。警告结论与关闭状态分别管理，已处理的问题和已披露的解释边界均保留登记。"
     )
     table(
-        ["问题", "关联", "主要措施", "建议责任角色", "状态"],
+        ["问题", "关联", "主要措施", "建议责任方", "状态"],
         [
             [
                 f"P-{i:02d} {row[2]}",
                 row[0],
                 row[4],
-                "项目组" if i in {1, 2, 7} else "来源方与项目组",
+                "项目组" if i in {1, 2, 7} else "来源方\n项目组",
                 row[5],
             ]
             for i, row in enumerate(warnings, 1)
@@ -748,11 +835,11 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     )
     h("9.2　需来源方确认的事项")
     p(
-        "需要确认物品类型0和1在各来源中的编码含义，提供统一的名称与物品身份映射；说明时间时区、导出工具的历史保留和截断条件、账号纳入与排除规则，以及缺失ID的生成原因。确认材料应保留版本和来源，避免仅靠经验或名称外观修改定义。"
+        "请来源方确认类型0和1的含义、名称实体映射、时区、历史保留与截断条件、账号纳入规则及缺失ID原因。确认材料应保留版本和来源，不凭名称外观修改类型。"
     )
     h("9.3　持续监控建议")
     p(
-        "后续每次运行继续要求13项工程断言全部通过，并跟踪重复、冲突、类型待复核、排序歧义和ADS隐藏格数量。对于新出现的冲突、关联错误和汇总不平衡，停止发布；对新增编码、名称与时间格式，先复核再更新配置。趋势告警阈值应基于多次运行的历史分布校准，当前不虚设经验百分比。"
+        "每次运行须通过13项工程断言，跟踪重复、冲突、类型复核、排序歧义和ADS隐藏格。冲突、关联错误或汇总失衡时停止发布；新编码、名称和时间格式先复核。趋势阈值待积累多次运行后校准。"
     )
 
     h("10　结论", 1)
@@ -781,7 +868,9 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
                 CHECK_NAMES[i - 1][0],
                 f"{row['actual']:,} / {row['expected']:,}",
                 "通过" if row["passed"] else "不通过",
-                row["check"],
+                row["check"].replace(
+                    "dws_player_pool_rank_accounting", "dws_player_pool_\nrank_accounting"
+                ),
             ]
             for i, row in enumerate(audit["checks"], 1)
         ],
@@ -808,7 +897,7 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
             ["rank_type", "结构与汇总已验证", "合法星级范围及汇总对账；非官方概率证据"],
             ["item_type", "部分来源待确认", "保留标记；当前不做可信角色武器分类"],
             ["name", "原始字符串可信", "允许精确频数统计；实体映射待补充"],
-            ["time_order_ambiguous", "规则标记", "用于排除顺序不明的账号池组合"],
+            ["time_order_\nambiguous", "规则标记", "用于排除顺序不明的账号池组合"],
             ["ADS贡献人数", "口径分项定义", "月份、名称与间隔箱取保守下界，不能相加推算独立人数"],
         ],
         [2200, 2100, 4726],
@@ -843,7 +932,7 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
         "七张图从同次已发布ADS重新按A4版心排版，图宽15.4厘米、200dpi，实际刻度字号不小于8磅。热力矩阵按小时分为上下两块以保证数字可读，仍共用相同色阶；其余指标、分母、分组和隐私门槛保持一致。图表保存前执行项目主题禁止项检查，无双Y轴。"
     )
     p(
-        "Q01来源范围对照图仅为内部诊断，按既定汇报要求不纳入本报告。主分析账号数、抽数及日期仅在必要的统计口径处说明。原模板的信令示例图和写作指引不构成本报告内容。"
+        "Q01来源范围对照图仅为内部诊断，按既定汇报要求不纳入本报告。主分析账号数、抽数及日期仅在必要的统计口径处说明。"
     )
     h("C.2　来源与复现")
     p(
@@ -862,7 +951,7 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     table(["术语", "说明"], entries, [2000, 7026], caption="表 D-1　统计与工程术语")
 
 
-def build(template: Path, analysis: Path, output: Path) -> Path:
+def build(template: Path, analysis: Path, output: Path, *, replace: bool = False) -> Path:
     """输出DOCX及来源清单，保留模板未修改部件的字节内容。"""
     from .viz.report_plots import generate
 
@@ -874,10 +963,14 @@ def build(template: Path, analysis: Path, output: Path) -> Path:
     if not all(path.is_relative_to(config.PROJECT_ROOT.resolve()) for path in (analysis, output)):
         raise ValueError("分析输入和报告输出必须位于本项目内部。")
     if output.exists():
-        raise FileExistsError("报告输出目录已存在，不能覆盖既有交付。")
+        marker = output / "build_manifest.json"
+        if not replace or not marker.is_file():
+            raise FileExistsError("报告输出目录已存在；重建本程序产物须显式使用--replace。")
+        if json.loads(marker.read_text(encoding="utf-8")).get("template_sha256") != TEMPLATE_SHA256:
+            raise ValueError("既有目录不是本模板的报告产物，不能覆盖。")
     data, audit, manifest = load_release(analysis)
     report = TemplateReport(template)
-    output.mkdir(parents=True)
+    output.mkdir(parents=True, exist_ok=replace)
     figures = generate(
         data, output / "figures", manifest["settings"]["version"] + "+" + manifest["config_hash"]
     )
@@ -927,6 +1020,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--output", type=Path, default=config.PRESENTATION_DIR / "quality_report_20261019"
     )
+    parser.add_argument("--replace", action="store_true", help="重建带本模板清单的既有报告目录")
     args = parser.parse_args(argv)
-    print(build(args.template, args.analysis, args.output))
+    print(build(args.template, args.analysis, args.output, replace=args.replace))
     return 0

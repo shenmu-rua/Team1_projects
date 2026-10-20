@@ -1,0 +1,111 @@
+{
+  "created_at": "2026-10-19T15:01:40.974376+08:00",
+  "settings": {
+    "version": "0.3.0",
+    "dataset": 3,
+    "minimum_people": 5,
+    "dpi": 200,
+    "canvas_inches": [
+      16,
+      9
+    ],
+    "theme": "bluepink",
+    "cleaning": {
+      "config_version": "0.2.0",
+      "rule_version": "1.0.0"
+    }
+  },
+  "config_hash": "3cee80f4",
+  "source_file": "genshin_clean_20261019_091822_4bc0fdfc.db",
+  "source_bytes": 1776463872,
+  "source_mtime_ns": 1792373264642242800,
+  "python": "3.14.6",
+  "matplotlib": "3.11.0",
+  "fonts": [
+    "Noto Sans SC"
+  ],
+  "figures": [
+    {
+      "file": "Q01_数据集范围.png",
+      "title": "数据集03占可发布记录的98.7%",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A01_卡池构成与五星占比.png",
+      "title": "角色活动祈愿贡献66.1%的记录",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A02_卡池月度记录.png",
+      "title": "2022-01单池月记录达181.3万抽",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A03_星期小时热力矩阵.png",
+      "title": "周二18时记录最多，计189.4万抽",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A04_账号留存记录量分布.png",
+      "title": "每个账号的留存抽数中位数为744抽",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A05_账号记录量分组五星占比.png",
+      "title": "角色池高记录量组的五星占比中位数为1.61%",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A06_记录内五星间隔分布.png",
+      "title": "角色池可分析151,941段记录内五星间隔",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    },
+    {
+      "file": "A07_五星原始名称记录榜.png",
+      "title": "前12个五星原始名称覆盖55.0%的五星记录",
+      "pixels": [
+        3200,
+        1800
+      ],
+      "dpi": 200
+    }
+  ],
+  "code_sha256": {
+    "src\\genshin_insight\\charts.py": "4727c94b310434fc276506523890a50d779ee919d8715f9cc737e36393cab19e",
+    "src\\genshin_insight\\ads.py": "ce069133eed4392f97ece184e064b5312528ede28c691c88f44af0e2d7b6e5cb",
+    "src\\genshin_insight\\config.py": "660070728429e8eddf71b505e7318b14401b2244d49871258cdf18d5418744db",
+    "src\\genshin_insight\\viz\\__init__.py": "4f2b23160bb903cbfc2220c876f7ed3364967f903a7cd5eda204e4eec54b015a",
+    "src\\genshin_insight\\viz\\plots.py": "d0e13a57915965208c18de4e48d77c37fa8c6c93d6a0bba62505bf5bf38fb8a3",
+    "make_charts.py": "bcf526b530b6e74ed4c70d2d0c80c0e9a78082ef570559ab21d9ef4c8abd3c26",
+    "theme\\theme.py": "4b7177b13ea152ddab41d63b34addbd938a22e1d1a5621aa311fd36f1c4e9356",
+    "theme\\spec_check.py": "b438c07b56f4eb09cf6ba949e4baa37c2251df85d1949884458fd4587c3a9687"
+  }
+}

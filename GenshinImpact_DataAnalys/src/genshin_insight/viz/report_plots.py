@@ -9,6 +9,26 @@ from . import finish, load_theme, save, sequential_cmap
 from .plots import bin_label, pool_colors
 
 
+def register_fonts(cache: Path):
+    """把可变开源字体定为常规与粗体，避免绘图引擎误取最细字重。"""
+    from fontTools.ttLib import TTFont
+    from fontTools.varLib.instancer import instantiateVariableFont
+    from matplotlib import font_manager
+
+    source = str(font_manager.findfont(font_manager.FontProperties(family="Noto Sans SC")))
+    with TTFont(source) as original:
+        if "fvar" not in original:
+            return
+        cache.mkdir(parents=True, exist_ok=True)
+        for weight in (400, 700):
+            target = cache / f"NotoSansSC-{weight}.ttf"
+            if not target.exists():
+                font = instantiateVariableFont(original, {"wght": weight}, updateFontNames=True)
+                font.save(target)
+                font.close()
+            font_manager.fontManager.addfont(str(target))
+
+
 def generate(data: dict, output: Path, version: str) -> list[Path]:
     """按报告物理宽度重新排图，保持卡池颜色与全部统计口径。"""
     import matplotlib
@@ -20,6 +40,7 @@ def generate(data: dict, output: Path, version: str) -> list[Path]:
 
     from . import apply_theme
 
+    register_fonts(output / ".font-cache")
     apply_theme(10)
     theme, colors = load_theme(), pool_colors()
     plt.rcParams.update({"font.size": 8.5, "axes.labelsize": 8.5})
