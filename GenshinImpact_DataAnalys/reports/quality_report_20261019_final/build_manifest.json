@@ -1,0 +1,115 @@
+{
+  "template_sha256": "c8e76be547092c268c85aa56227c5139f0a7b727ace23c33b1f095d11bca65cb",
+  "ads_sha256": "8b46a397333b1bd893c77f2d2dc0f8c9992e827921b0baa7fa25f4d7a2549f9f",
+  "source_config": "3cee80f4",
+  "rule_version": "1.0.0",
+  "technical_checks": 13,
+  "assessment_items": 20,
+  "pass": 13,
+  "warning": 7,
+  "fail": 0,
+  "figures": [
+    {
+      "code": "A01",
+      "caption": "图 7-1　卡池构成与记录内五星占比",
+      "file": "report_A01.png",
+      "width_cm": 15.4
+    },
+    {
+      "code": "A02",
+      "caption": "图 7-2　各卡池月度留存抽数",
+      "file": "report_A02.png",
+      "width_cm": 15.4
+    },
+    {
+      "code": "A03",
+      "caption": "图 7-3　星期与小时留存记录热力矩阵",
+      "file": "report_A03.png",
+      "width_cm": 15.4
+    },
+    {
+      "code": "A04",
+      "caption": "图 7-4　账号记录量与分箱累计分布",
+      "file": "report_A04.png",
+      "width_cm": 15.4
+    },
+    {
+      "code": "A05",
+      "caption": "图 7-5　账号记录量分组的五星占比分布",
+      "file": "report_A05.png",
+      "width_cm": 15.4
+    },
+    {
+      "code": "A06",
+      "caption": "图 7-6　记录内已闭合五星间隔分布",
+      "file": "report_A06.png",
+      "width_cm": 15.4
+    },
+    {
+      "code": "A07",
+      "caption": "图 7-7　五星原始名称出现次数",
+      "file": "report_A07.png",
+      "width_cm": 15.4
+    }
+  ],
+  "changed_template_parts": [
+    "word/_rels/document.xml.rels",
+    "word/document.xml",
+    "word/styles.xml",
+    "docProps/core.xml",
+    "word/header1.xml",
+    "word/header2.xml",
+    "word/footer1.xml",
+    "word/footer2.xml",
+    "word/settings.xml",
+    "word/fontTable.xml"
+  ],
+  "preserved_parts_sha256": {
+    "word/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "word/_rels/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docProps/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "word/numbering.xml": "96f14783c1338c0f4d1fc9a4e3ec7dcea18e75fd2457beb4455e0fe648cd16c2",
+    "_rels/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "_rels/.rels": "641d22a23aa9eb550103a7a01471eaeda5e84c69413e6e03e7fd290b4811a756",
+    "word/_rels/header1.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/_rels/header2.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/_rels/footer1.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/_rels/footer2.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "[Content_Types].xml": "8cbc3e7c838e23250e2c9714e3076f3d61fdf5575dda45af9842cc3206a2b780",
+    "docProps/custom.xml": "8ec73cc7ce297e42cc652a1d1884d4ffb18ffa0ba7a6502a36f8da90d1be61a1",
+    "docProps/app.xml": "579eba9a8d602575736c3880cf5b529aabbadee0e8cc0e4df8573db0ceadbd4b",
+    "word/footnotes.xml": "774ce254f01cde1079d43e81a0db30ac82b3b2bae875b07c4fe28403ba30b6a9",
+    "word/_rels/footnotes.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/endnotes.xml": "52f6c33e62c233e0d9f9c41ec259ffd943ea9cdc413293d43e6ffb213682a5cf",
+    "word/_rels/endnotes.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/comments.xml": "dd2d62f68c6fd01fc4d7d44081587af54ea3e135b9486cc44fa3c62d087adfec",
+    "word/_rels/comments.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/_rels/fontTable.xml.rels": "bf64631f0bc7bd46712fef822bcfb22e069fa5779e133980ca0c9d81f00efc09",
+    "word/media/": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "word/media/10b223a417c3f2b0c92c6c6091b393c86bf6e28a.png": "5061cfd268a849e9040da21c5c3cd493d7ffd7577ad83f3b3ad5b15a8b1cef96",
+    "word/media/a37ae9dd1f89cba6004fffdd28d2e0e343e2780d.png": "09de417b243dc65c5c229f0a6729bd7f9d860f6c015580fa8fce65837c7f9c70",
+    "word/media/42f6cae5815b76396e4543b2d547f914825635d4.png": "610ae37c3dd73e40888f2f012c76e15dd34e66f650a4dfd2b139184dd5c5d75c",
+    "word/media/eb9e209cf3fb1f03895a05ef31597c8a5badfc1c.png": "d2b5fef82b19cf35434ffb826f7f037eebe89aa7cd1bac838c24eba0499f33a4"
+  },
+  "field_refresh": "Microsoft Word native TOC and page-number update",
+  "code_sha256": {
+    "report.py": "19e1d61a80da6f4c146a2e62639aefc3674129471b6327ef6f31db9eea2fb74f",
+    "report_plots.py": "2a5993e6723bb31cabe8682e9970e1bc360c5a3bc03d1afc74daa44a599a2ac7"
+  },
+  "pages": 26,
+  "toc_entries": 46,
+  "document_sha256": "a1085e6812abafcc45ba8ab441d3358abb1eb1a1460852e565d3b242584ccf47",
+  "validation": {
+    "pages": 26,
+    "toc_entries_checked": 46,
+    "all_pages_visually_reviewed": true,
+    "final_render_matches_reviewed_proof": true,
+    "preserved_template_parts_checked": 25,
+    "font_families": [
+      "Noto Serif CJK SC",
+      "TeXGyreTermes",
+      "Noto Sans SC"
+    ],
+    "database_access": "none; published ADS and aggregate audit only"
+  }
+}

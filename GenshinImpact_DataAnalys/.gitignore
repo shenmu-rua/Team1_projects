@@ -1,7 +1,5 @@
 # Raw data, cleaning runs, generated figures and reports stay local.
 /data/
-/image/
-/reports/
 /outputs/
 /artifacts/
 .ipynb_checkpoints/

@@ -15,6 +15,7 @@ analysis = ["pandas>=2.2,<4"]
 viz = ["matplotlib>=3.8,<4", "numpy>=1.26,<3"]
 presentation = ["fonttools>=4.50,<5"]
 motion = ["imageio-ffmpeg>=0.6,<1", "numpy>=1.26,<3", "fonttools>=4.50,<5"]
+report = ["lxml>=5,<7", "pillow>=10,<13", "fonttools>=4.50,<5"]
 dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
 
 [project.scripts]

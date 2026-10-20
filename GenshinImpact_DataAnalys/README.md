@@ -152,3 +152,19 @@ python make_opener.py --background .\reports\opener_20261019_final\assets\cosmic
 `viz/opener.html`负责确定性的逐帧动画，`viz/render_opener.cjs`用本地Chrome/WebCodecs编码并由FFmpeg封装。
 可通过 `--ffmpeg`、`--node` 指定可执行文件；`--prepare-only`只生成动画母版和音轨。
 如Node包未安装在项目 `node_modules/`，运行前用 `NODE_PATH` 指向已有包目录。
+
+## 按Word模板导出报告
+
+安装 `.[analysis,viz,report]` 后，在本项目中执行：
+
+```powershell
+python make_report.py --template "模板的绝对路径.docx" --output .\reports\quality_report_new
+```
+
+`make_report.py`通过本地import调用`report.py`填充模板，保留封面、分节页码、标题、表格与目录控件；
+正文包含十章、七张A4图和四个附录，解释清洗方法、质量结论、图表含义及Q1/Q2等术语。
+它只读取已有ADS和清洗聚合稽核，不连接数据库。`viz/report_plots.py`保持蓝粉主题，
+图宽15.4厘米、200dpi，实际刻度不小于8磅，不使用双Y轴。
+
+构建清单记录模板、ADS和代码哈希，以及保留的模板包部件哈希。重建带同模板清单的目录须显式传入`--replace`。
+目录和页码须经Microsoft Word原生更新后完成交付检查；本次定稿已完成更新和逐页渲染验证。

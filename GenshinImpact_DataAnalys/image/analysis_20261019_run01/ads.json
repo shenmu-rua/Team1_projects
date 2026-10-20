@@ -1,0 +1,2172 @@
+{
+  "dataset": 3,
+  "scope": {
+    "dataset_id": 3,
+    "pulls": 15598804,
+    "people": 16289,
+    "first_time": "2020-12-03 23:35:23",
+    "last_time": "2022-07-26 20:57:25",
+    "suppressed": false
+  },
+  "provenance": {
+    "config_version": "0.2.0",
+    "rule_version": "1.0.0"
+  },
+  "checks": {
+    "failed": 0,
+    "checks": 13
+  },
+  "cohorts": [
+    {
+      "dataset_id": 2,
+      "pulls": 208262,
+      "people": 175,
+      "first_time": "2020-09-15 09:52:50",
+      "last_time": "2021-06-27 18:43:31",
+      "suppressed": false
+    },
+    {
+      "dataset_id": 3,
+      "pulls": 15598804,
+      "people": 16289,
+      "first_time": "2020-12-03 23:35:23",
+      "last_time": "2022-07-26 20:57:25",
+      "suppressed": false
+    }
+  ],
+  "pools": [
+    {
+      "pool_group": 100,
+      "pulls": 112120,
+      "people": 6035,
+      "star5": 781,
+      "suppressed": false
+    },
+    {
+      "pool_group": 200,
+      "pulls": 2336423,
+      "people": 16245,
+      "star5": 35639,
+      "suppressed": false
+    },
+    {
+      "pool_group": 301,
+      "pulls": 10310849,
+      "people": 16277,
+      "star5": 168055,
+      "suppressed": false
+    },
+    {
+      "pool_group": 302,
+      "pulls": 2839412,
+      "people": 14258,
+      "star5": 52821,
+      "suppressed": false
+    }
+  ],
+  "months": [
+    {
+      "month": "2020-12",
+      "pool_group": 100,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-01",
+      "pool_group": 100,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-02",
+      "pool_group": 100,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-03",
+      "pool_group": 100,
+      "pulls": 960,
+      "people": 5,
+      "suppressed": false
+    },
+    {
+      "month": "2021-04",
+      "pool_group": 100,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-05",
+      "pool_group": 100,
+      "pulls": 1070,
+      "people": 7,
+      "suppressed": false
+    },
+    {
+      "month": "2021-06",
+      "pool_group": 100,
+      "pulls": 1660,
+      "people": 11,
+      "suppressed": false
+    },
+    {
+      "month": "2021-07",
+      "pool_group": 100,
+      "pulls": 4110,
+      "people": 19,
+      "suppressed": false
+    },
+    {
+      "month": "2021-08",
+      "pool_group": 100,
+      "pulls": 9180,
+      "people": 33,
+      "suppressed": false
+    },
+    {
+      "month": "2021-09",
+      "pool_group": 100,
+      "pulls": 11770,
+      "people": 49,
+      "suppressed": false
+    },
+    {
+      "month": "2021-10",
+      "pool_group": 100,
+      "pulls": 8750,
+      "people": 51,
+      "suppressed": false
+    },
+    {
+      "month": "2021-11",
+      "pool_group": 100,
+      "pulls": 9030,
+      "people": 36,
+      "suppressed": false
+    },
+    {
+      "month": "2021-12",
+      "pool_group": 100,
+      "pulls": 11290,
+      "people": 53,
+      "suppressed": false
+    },
+    {
+      "month": "2022-01",
+      "pool_group": 100,
+      "pulls": 20240,
+      "people": 74,
+      "suppressed": false
+    },
+    {
+      "month": "2022-02",
+      "pool_group": 100,
+      "pulls": 11860,
+      "people": 57,
+      "suppressed": false
+    },
+    {
+      "month": "2022-03",
+      "pool_group": 100,
+      "pulls": 9880,
+      "people": 41,
+      "suppressed": false
+    },
+    {
+      "month": "2022-04",
+      "pool_group": 100,
+      "pulls": 5010,
+      "people": 25,
+      "suppressed": false
+    },
+    {
+      "month": "2022-05",
+      "pool_group": 100,
+      "pulls": 3630,
+      "people": 17,
+      "suppressed": false
+    },
+    {
+      "month": "2022-06",
+      "pool_group": 100,
+      "pulls": 1750,
+      "people": 15,
+      "suppressed": false
+    },
+    {
+      "month": "2022-07",
+      "pool_group": 100,
+      "pulls": 730,
+      "people": 9,
+      "suppressed": false
+    },
+    {
+      "month": "2020-12",
+      "pool_group": 200,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-01",
+      "pool_group": 200,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-02",
+      "pool_group": 200,
+      "pulls": 5933,
+      "people": 98,
+      "suppressed": false
+    },
+    {
+      "month": "2021-03",
+      "pool_group": 200,
+      "pulls": 10133,
+      "people": 194,
+      "suppressed": false
+    },
+    {
+      "month": "2021-04",
+      "pool_group": 200,
+      "pulls": 11712,
+      "people": 294,
+      "suppressed": false
+    },
+    {
+      "month": "2021-05",
+      "pool_group": 200,
+      "pulls": 16038,
+      "people": 387,
+      "suppressed": false
+    },
+    {
+      "month": "2021-06",
+      "pool_group": 200,
+      "pulls": 20761,
+      "people": 482,
+      "suppressed": false
+    },
+    {
+      "month": "2021-07",
+      "pool_group": 200,
+      "pulls": 51878,
+      "people": 926,
+      "suppressed": false
+    },
+    {
+      "month": "2021-08",
+      "pool_group": 200,
+      "pulls": 99327,
+      "people": 1809,
+      "suppressed": false
+    },
+    {
+      "month": "2021-09",
+      "pool_group": 200,
+      "pulls": 165699,
+      "people": 3774,
+      "suppressed": false
+    },
+    {
+      "month": "2021-10",
+      "pool_group": 200,
+      "pulls": 180563,
+      "people": 4366,
+      "suppressed": false
+    },
+    {
+      "month": "2021-11",
+      "pool_group": 200,
+      "pulls": 180603,
+      "people": 5070,
+      "suppressed": false
+    },
+    {
+      "month": "2021-12",
+      "pool_group": 200,
+      "pulls": 193155,
+      "people": 5722,
+      "suppressed": false
+    },
+    {
+      "month": "2022-01",
+      "pool_group": 200,
+      "pulls": 324378,
+      "people": 6794,
+      "suppressed": false
+    },
+    {
+      "month": "2022-02",
+      "pool_group": 200,
+      "pulls": 263057,
+      "people": 8860,
+      "suppressed": false
+    },
+    {
+      "month": "2022-03",
+      "pool_group": 200,
+      "pulls": 251563,
+      "people": 7238,
+      "suppressed": false
+    },
+    {
+      "month": "2022-04",
+      "pool_group": 200,
+      "pulls": 235367,
+      "people": 7696,
+      "suppressed": false
+    },
+    {
+      "month": "2022-05",
+      "pool_group": 200,
+      "pulls": 126133,
+      "people": 6275,
+      "suppressed": false
+    },
+    {
+      "month": "2022-06",
+      "pool_group": 200,
+      "pulls": 123824,
+      "people": 5552,
+      "suppressed": false
+    },
+    {
+      "month": "2022-07",
+      "pool_group": 200,
+      "pulls": 73430,
+      "people": 3632,
+      "suppressed": false
+    },
+    {
+      "month": "2020-12",
+      "pool_group": 301,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-01",
+      "pool_group": 301,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-02",
+      "pool_group": 301,
+      "pulls": 18023,
+      "people": 130,
+      "suppressed": false
+    },
+    {
+      "month": "2021-03",
+      "pool_group": 301,
+      "pulls": 40552,
+      "people": 233,
+      "suppressed": false
+    },
+    {
+      "month": "2021-04",
+      "pool_group": 301,
+      "pulls": 50710,
+      "people": 488,
+      "suppressed": false
+    },
+    {
+      "month": "2021-05",
+      "pool_group": 301,
+      "pulls": 61224,
+      "people": 517,
+      "suppressed": false
+    },
+    {
+      "month": "2021-06",
+      "pool_group": 301,
+      "pulls": 73733,
+      "people": 710,
+      "suppressed": false
+    },
+    {
+      "month": "2021-07",
+      "pool_group": 301,
+      "pulls": 175410,
+      "people": 1427,
+      "suppressed": false
+    },
+    {
+      "month": "2021-08",
+      "pool_group": 301,
+      "pulls": 217304,
+      "people": 2379,
+      "suppressed": false
+    },
+    {
+      "month": "2021-09",
+      "pool_group": 301,
+      "pulls": 834424,
+      "people": 4414,
+      "suppressed": false
+    },
+    {
+      "month": "2021-10",
+      "pool_group": 301,
+      "pulls": 332317,
+      "people": 2977,
+      "suppressed": false
+    },
+    {
+      "month": "2021-11",
+      "pool_group": 301,
+      "pulls": 942508,
+      "people": 6496,
+      "suppressed": false
+    },
+    {
+      "month": "2021-12",
+      "pool_group": 301,
+      "pulls": 634643,
+      "people": 4512,
+      "suppressed": false
+    },
+    {
+      "month": "2022-01",
+      "pool_group": 301,
+      "pulls": 1813296,
+      "people": 7471,
+      "suppressed": false
+    },
+    {
+      "month": "2022-02",
+      "pool_group": 301,
+      "pulls": 1096588,
+      "people": 8860,
+      "suppressed": false
+    },
+    {
+      "month": "2022-03",
+      "pool_group": 301,
+      "pulls": 1500086,
+      "people": 7287,
+      "suppressed": false
+    },
+    {
+      "month": "2022-04",
+      "pool_group": 301,
+      "pulls": 844104,
+      "people": 5886,
+      "suppressed": false
+    },
+    {
+      "month": "2022-05",
+      "pool_group": 301,
+      "pulls": 604184,
+      "people": 5509,
+      "suppressed": false
+    },
+    {
+      "month": "2022-06",
+      "pool_group": 301,
+      "pulls": 592166,
+      "people": 3590,
+      "suppressed": false
+    },
+    {
+      "month": "2022-07",
+      "pool_group": 301,
+      "pulls": 472538,
+      "people": 4967,
+      "suppressed": false
+    },
+    {
+      "month": "2020-12",
+      "pool_group": 302,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-01",
+      "pool_group": 302,
+      "pulls": null,
+      "people": null,
+      "suppressed": true
+    },
+    {
+      "month": "2021-02",
+      "pool_group": 302,
+      "pulls": 15476,
+      "people": 107,
+      "suppressed": false
+    },
+    {
+      "month": "2021-03",
+      "pool_group": 302,
+      "pulls": 11895,
+      "people": 75,
+      "suppressed": false
+    },
+    {
+      "month": "2021-04",
+      "pool_group": 302,
+      "pulls": 6823,
+      "people": 76,
+      "suppressed": false
+    },
+    {
+      "month": "2021-05",
+      "pool_group": 302,
+      "pulls": 10943,
+      "people": 113,
+      "suppressed": false
+    },
+    {
+      "month": "2021-06",
+      "pool_group": 302,
+      "pulls": 12946,
+      "people": 123,
+      "suppressed": false
+    },
+    {
+      "month": "2021-07",
+      "pool_group": 302,
+      "pulls": 59214,
+      "people": 488,
+      "suppressed": false
+    },
+    {
+      "month": "2021-08",
+      "pool_group": 302,
+      "pulls": 70741,
+      "people": 522,
+      "suppressed": false
+    },
+    {
+      "month": "2021-09",
+      "pool_group": 302,
+      "pulls": 238870,
+      "people": 1502,
+      "suppressed": false
+    },
+    {
+      "month": "2021-10",
+      "pool_group": 302,
+      "pulls": 169272,
+      "people": 1714,
+      "suppressed": false
+    },
+    {
+      "month": "2021-11",
+      "pool_group": 302,
+      "pulls": 416722,
+      "people": 3500,
+      "suppressed": false
+    },
+    {
+      "month": "2021-12",
+      "pool_group": 302,
+      "pulls": 181246,
+      "people": 1642,
+      "suppressed": false
+    },
+    {
+      "month": "2022-01",
+      "pool_group": 302,
+      "pulls": 256291,
+      "people": 1658,
+      "suppressed": false
+    },
+    {
+      "month": "2022-02",
+      "pool_group": 302,
+      "pulls": 307277,
+      "people": 2951,
+      "suppressed": false
+    },
+    {
+      "month": "2022-03",
+      "pool_group": 302,
+      "pulls": 338278,
+      "people": 2405,
+      "suppressed": false
+    },
+    {
+      "month": "2022-04",
+      "pool_group": 302,
+      "pulls": 303883,
+      "people": 2694,
+      "suppressed": false
+    },
+    {
+      "month": "2022-05",
+      "pool_group": 302,
+      "pulls": 244519,
+      "people": 1817,
+      "suppressed": false
+    },
+    {
+      "month": "2022-06",
+      "pool_group": 302,
+      "pulls": 131119,
+      "people": 1009,
+      "suppressed": false
+    },
+    {
+      "month": "2022-07",
+      "pool_group": 302,
+      "pulls": 61812,
+      "people": 969,
+      "suppressed": false
+    }
+  ],
+  "clock": [
+    {
+      "weekday": 0,
+      "hour": 0,
+      "pulls": 61069,
+      "people": 7210,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 1,
+      "pulls": 40063,
+      "people": 4647,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 2,
+      "pulls": 23744,
+      "people": 2891,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 3,
+      "pulls": 15191,
+      "people": 1860,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 4,
+      "pulls": 23640,
+      "people": 2665,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 5,
+      "pulls": 15751,
+      "people": 2112,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 6,
+      "pulls": 18341,
+      "people": 2641,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 7,
+      "pulls": 28347,
+      "people": 4152,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 8,
+      "pulls": 41389,
+      "people": 5836,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 9,
+      "pulls": 51202,
+      "people": 6996,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 10,
+      "pulls": 60964,
+      "people": 7845,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 11,
+      "pulls": 61249,
+      "people": 8196,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 12,
+      "pulls": 72835,
+      "people": 8921,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 13,
+      "pulls": 67519,
+      "people": 8715,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 14,
+      "pulls": 53504,
+      "people": 7563,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 15,
+      "pulls": 50118,
+      "people": 7221,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 16,
+      "pulls": 49825,
+      "people": 7147,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 17,
+      "pulls": 48449,
+      "people": 7119,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 18,
+      "pulls": 51889,
+      "people": 7243,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 19,
+      "pulls": 57521,
+      "people": 7463,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 20,
+      "pulls": 65535,
+      "people": 8179,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 21,
+      "pulls": 74877,
+      "people": 8821,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 22,
+      "pulls": 84737,
+      "people": 9161,
+      "suppressed": false
+    },
+    {
+      "weekday": 0,
+      "hour": 23,
+      "pulls": 77616,
+      "people": 8605,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 0,
+      "pulls": 69800,
+      "people": 7217,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 1,
+      "pulls": 39954,
+      "people": 4612,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 2,
+      "pulls": 24517,
+      "people": 2836,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 3,
+      "pulls": 13356,
+      "people": 1824,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 4,
+      "pulls": 29591,
+      "people": 2739,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 5,
+      "pulls": 15021,
+      "people": 1854,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 6,
+      "pulls": 17989,
+      "people": 2585,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 7,
+      "pulls": 32678,
+      "people": 4257,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 8,
+      "pulls": 48096,
+      "people": 5925,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 9,
+      "pulls": 54021,
+      "people": 6936,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 10,
+      "pulls": 90658,
+      "people": 7831,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 11,
+      "pulls": 218544,
+      "people": 9092,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 12,
+      "pulls": 139111,
+      "people": 9393,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 13,
+      "pulls": 105363,
+      "people": 8735,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 14,
+      "pulls": 73872,
+      "people": 7604,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 15,
+      "pulls": 59625,
+      "people": 7004,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 16,
+      "pulls": 59440,
+      "people": 6926,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 17,
+      "pulls": 62031,
+      "people": 7154,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 18,
+      "pulls": 1893835,
+      "people": 13561,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 19,
+      "pulls": 420275,
+      "people": 11065,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 20,
+      "pulls": 280332,
+      "people": 10480,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 21,
+      "pulls": 242355,
+      "people": 10554,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 22,
+      "pulls": 219436,
+      "people": 10557,
+      "suppressed": false
+    },
+    {
+      "weekday": 1,
+      "hour": 23,
+      "pulls": 164005,
+      "people": 9686,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 0,
+      "pulls": 128207,
+      "people": 8123,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 1,
+      "pulls": 71658,
+      "people": 5187,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 2,
+      "pulls": 36334,
+      "people": 3220,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 3,
+      "pulls": 25311,
+      "people": 2045,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 4,
+      "pulls": 36328,
+      "people": 2611,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 5,
+      "pulls": 21764,
+      "people": 2024,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 6,
+      "pulls": 24543,
+      "people": 2700,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 7,
+      "pulls": 41964,
+      "people": 4437,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 8,
+      "pulls": 57946,
+      "people": 5977,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 9,
+      "pulls": 71257,
+      "people": 6911,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 10,
+      "pulls": 738597,
+      "people": 10234,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 11,
+      "pulls": 821982,
+      "people": 12116,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 12,
+      "pulls": 468908,
+      "people": 11688,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 13,
+      "pulls": 266317,
+      "people": 10790,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 14,
+      "pulls": 169846,
+      "people": 9330,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 15,
+      "pulls": 141657,
+      "people": 8915,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 16,
+      "pulls": 119391,
+      "people": 8644,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 17,
+      "pulls": 126503,
+      "people": 8649,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 18,
+      "pulls": 139150,
+      "people": 8854,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 19,
+      "pulls": 147832,
+      "people": 9062,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 20,
+      "pulls": 152047,
+      "people": 9666,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 21,
+      "pulls": 155502,
+      "people": 10127,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 22,
+      "pulls": 159576,
+      "people": 10536,
+      "suppressed": false
+    },
+    {
+      "weekday": 2,
+      "hour": 23,
+      "pulls": 140181,
+      "people": 9898,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 0,
+      "pulls": 115130,
+      "people": 8262,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 1,
+      "pulls": 65619,
+      "people": 5476,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 2,
+      "pulls": 40690,
+      "people": 3407,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 3,
+      "pulls": 23890,
+      "people": 2132,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 4,
+      "pulls": 24978,
+      "people": 2568,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 5,
+      "pulls": 15722,
+      "people": 1919,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 6,
+      "pulls": 19606,
+      "people": 2642,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 7,
+      "pulls": 30484,
+      "people": 4074,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 8,
+      "pulls": 42293,
+      "people": 5727,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 9,
+      "pulls": 54807,
+      "people": 6898,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 10,
+      "pulls": 69371,
+      "people": 7774,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 11,
+      "pulls": 70387,
+      "people": 8140,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 12,
+      "pulls": 90135,
+      "people": 8942,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 13,
+      "pulls": 79448,
+      "people": 8759,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 14,
+      "pulls": 64059,
+      "people": 7754,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 15,
+      "pulls": 61522,
+      "people": 7477,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 16,
+      "pulls": 63439,
+      "people": 7573,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 17,
+      "pulls": 65008,
+      "people": 7647,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 18,
+      "pulls": 71849,
+      "people": 7818,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 19,
+      "pulls": 76084,
+      "people": 8200,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 20,
+      "pulls": 83915,
+      "people": 8723,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 21,
+      "pulls": 92459,
+      "people": 9448,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 22,
+      "pulls": 108240,
+      "people": 9841,
+      "suppressed": false
+    },
+    {
+      "weekday": 3,
+      "hour": 23,
+      "pulls": 103600,
+      "people": 9307,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 0,
+      "pulls": 83103,
+      "people": 7985,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 1,
+      "pulls": 53164,
+      "people": 5266,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 2,
+      "pulls": 31439,
+      "people": 3303,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 3,
+      "pulls": 17565,
+      "people": 2057,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 4,
+      "pulls": 28811,
+      "people": 2804,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 5,
+      "pulls": 17462,
+      "people": 2023,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 6,
+      "pulls": 21693,
+      "people": 2720,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 7,
+      "pulls": 35501,
+      "people": 4422,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 8,
+      "pulls": 49739,
+      "people": 6017,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 9,
+      "pulls": 61298,
+      "people": 7105,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 10,
+      "pulls": 71498,
+      "people": 7888,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 11,
+      "pulls": 71520,
+      "people": 8110,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 12,
+      "pulls": 82271,
+      "people": 8765,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 13,
+      "pulls": 75373,
+      "people": 8671,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 14,
+      "pulls": 61209,
+      "people": 7652,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 15,
+      "pulls": 63666,
+      "people": 7404,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 16,
+      "pulls": 60284,
+      "people": 7451,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 17,
+      "pulls": 65251,
+      "people": 7547,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 18,
+      "pulls": 65878,
+      "people": 7577,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 19,
+      "pulls": 72955,
+      "people": 8095,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 20,
+      "pulls": 101171,
+      "people": 9616,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 21,
+      "pulls": 103494,
+      "people": 9978,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 22,
+      "pulls": 109325,
+      "people": 9999,
+      "suppressed": false
+    },
+    {
+      "weekday": 4,
+      "hour": 23,
+      "pulls": 97387,
+      "people": 9556,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 0,
+      "pulls": 89326,
+      "people": 8607,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 1,
+      "pulls": 55481,
+      "people": 5979,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 2,
+      "pulls": 37249,
+      "people": 3934,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 3,
+      "pulls": 21166,
+      "people": 2422,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 4,
+      "pulls": 29697,
+      "people": 3071,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 5,
+      "pulls": 14946,
+      "people": 2054,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 6,
+      "pulls": 17138,
+      "people": 2480,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 7,
+      "pulls": 29528,
+      "people": 3851,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 8,
+      "pulls": 40613,
+      "people": 5580,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 9,
+      "pulls": 61416,
+      "people": 7342,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 10,
+      "pulls": 71368,
+      "people": 8470,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 11,
+      "pulls": 78519,
+      "people": 9002,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 12,
+      "pulls": 76420,
+      "people": 9086,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 13,
+      "pulls": 76383,
+      "people": 9123,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 14,
+      "pulls": 72828,
+      "people": 8693,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 15,
+      "pulls": 68936,
+      "people": 8346,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 16,
+      "pulls": 71138,
+      "people": 8330,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 17,
+      "pulls": 62878,
+      "people": 8039,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 18,
+      "pulls": 61221,
+      "people": 7833,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 19,
+      "pulls": 61547,
+      "people": 7914,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 20,
+      "pulls": 77089,
+      "people": 8472,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 21,
+      "pulls": 78709,
+      "people": 8903,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 22,
+      "pulls": 82262,
+      "people": 9171,
+      "suppressed": false
+    },
+    {
+      "weekday": 5,
+      "hour": 23,
+      "pulls": 81268,
+      "people": 8928,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 0,
+      "pulls": 81662,
+      "people": 8267,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 1,
+      "pulls": 52768,
+      "people": 5879,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 2,
+      "pulls": 32710,
+      "people": 3895,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 3,
+      "pulls": 21212,
+      "people": 2453,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 4,
+      "pulls": 29029,
+      "people": 3035,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 5,
+      "pulls": 15084,
+      "people": 2055,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 6,
+      "pulls": 17022,
+      "people": 2415,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 7,
+      "pulls": 24984,
+      "people": 3719,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 8,
+      "pulls": 40412,
+      "people": 5497,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 9,
+      "pulls": 56957,
+      "people": 7072,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 10,
+      "pulls": 70902,
+      "people": 8488,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 11,
+      "pulls": 72385,
+      "people": 8865,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 12,
+      "pulls": 74844,
+      "people": 8957,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 13,
+      "pulls": 73426,
+      "people": 9032,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 14,
+      "pulls": 69061,
+      "people": 8588,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 15,
+      "pulls": 66715,
+      "people": 8377,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 16,
+      "pulls": 61465,
+      "people": 8269,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 17,
+      "pulls": 62042,
+      "people": 7930,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 18,
+      "pulls": 52737,
+      "people": 7372,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 19,
+      "pulls": 54046,
+      "people": 7469,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 20,
+      "pulls": 63735,
+      "people": 8294,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 21,
+      "pulls": 71276,
+      "people": 8649,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 22,
+      "pulls": 75939,
+      "people": 8773,
+      "suppressed": false
+    },
+    {
+      "weekday": 6,
+      "hour": 23,
+      "pulls": 75392,
+      "people": 8480,
+      "suppressed": false
+    }
+  ],
+  "volume_bins": [
+    {
+      "lo": 1,
+      "hi": 100,
+      "counts": {
+        "0": 209
+      },
+      "people": {
+        "0": 209
+      }
+    },
+    {
+      "lo": 101,
+      "hi": 300,
+      "counts": {
+        "0": 1327
+      },
+      "people": {
+        "0": 1327
+      }
+    },
+    {
+      "lo": 301,
+      "hi": 600,
+      "counts": {
+        "0": 4192
+      },
+      "people": {
+        "0": 4192
+      }
+    },
+    {
+      "lo": 601,
+      "hi": 1000,
+      "counts": {
+        "0": 5538
+      },
+      "people": {
+        "0": 5538
+      }
+    },
+    {
+      "lo": 1001,
+      "hi": 2000,
+      "counts": {
+        "0": 3899
+      },
+      "people": {
+        "0": 3899
+      }
+    },
+    {
+      "lo": 2001,
+      "hi": 5000,
+      "counts": {
+        "0": 972
+      },
+      "people": {
+        "0": 972
+      }
+    },
+    {
+      "lo": 5001,
+      "hi": null,
+      "counts": {
+        "0": 152
+      },
+      "people": {
+        "0": 152
+      }
+    }
+  ],
+  "volume_median": 744,
+  "rates": [
+    {
+      "pool_group": 100,
+      "quartile": 1,
+      "people": 6035,
+      "q25": 0.0,
+      "median": 0.0,
+      "q75": 0.0
+    },
+    {
+      "pool_group": 200,
+      "quartile": 1,
+      "people": 4065,
+      "q25": 1.0638297872340425,
+      "median": 1.25,
+      "q75": 2.0833333333333335
+    },
+    {
+      "pool_group": 200,
+      "quartile": 2,
+      "people": 4069,
+      "q25": 0.9523809523809523,
+      "median": 1.5873015873015872,
+      "q75": 1.9047619047619047
+    },
+    {
+      "pool_group": 200,
+      "quartile": 3,
+      "people": 4088,
+      "q25": 1.2195121951219512,
+      "median": 1.3888888888888888,
+      "q75": 1.8072289156626506
+    },
+    {
+      "pool_group": 200,
+      "quartile": 4,
+      "people": 4023,
+      "q25": 1.2552301255230125,
+      "median": 1.492537313432836,
+      "q75": 1.7391304347826086
+    },
+    {
+      "pool_group": 301,
+      "quartile": 1,
+      "people": 4072,
+      "q25": 1.2658227848101267,
+      "median": 1.5772870662460567,
+      "q75": 1.948051948051948
+    },
+    {
+      "pool_group": 301,
+      "quartile": 2,
+      "people": 4071,
+      "q25": 1.4314928425357873,
+      "median": 1.6085790884718498,
+      "q75": 1.8276762402088773
+    },
+    {
+      "pool_group": 301,
+      "quartile": 3,
+      "people": 4065,
+      "q25": 1.4619883040935673,
+      "median": 1.6032064128256514,
+      "q75": 1.7751479289940828
+    },
+    {
+      "pool_group": 301,
+      "quartile": 4,
+      "people": 4069,
+      "q25": 1.5063731170336037,
+      "median": 1.607717041800643,
+      "q75": 1.7241379310344827
+    },
+    {
+      "pool_group": 302,
+      "quartile": 1,
+      "people": 3594,
+      "q25": 0.0,
+      "median": 0.0,
+      "q75": 0.0
+    },
+    {
+      "pool_group": 302,
+      "quartile": 2,
+      "people": 3540,
+      "q25": 1.3333333333333333,
+      "median": 1.5749007936507935,
+      "q75": 2.0833333333333335
+    },
+    {
+      "pool_group": 302,
+      "quartile": 3,
+      "people": 3565,
+      "q25": 1.5228426395939085,
+      "median": 1.7937219730941705,
+      "q75": 2.1739130434782608
+    },
+    {
+      "pool_group": 302,
+      "quartile": 4,
+      "people": 3559,
+      "q25": 1.6666666666666667,
+      "median": 1.8404907975460123,
+      "q75": 2.0253164556962027
+    }
+  ],
+  "gap_bins": [
+    {
+      "lo": 1,
+      "hi": 10,
+      "counts": {
+        "200": 2163,
+        "301": 10831,
+        "302": 3510
+      },
+      "people": {
+        "200": 233,
+        "301": 1106,
+        "302": 397
+      }
+    },
+    {
+      "lo": 11,
+      "hi": 20,
+      "counts": {
+        "200": 1827,
+        "301": 9715,
+        "302": 2975
+      },
+      "people": {
+        "200": 195,
+        "301": 953,
+        "302": 320
+      }
+    },
+    {
+      "lo": 21,
+      "hi": 30,
+      "counts": {
+        "200": 1510,
+        "301": 8774,
+        "302": 2694
+      },
+      "people": {
+        "200": 168,
+        "301": 870,
+        "302": 306
+      }
+    },
+    {
+      "lo": 31,
+      "hi": 40,
+      "counts": {
+        "200": 1332,
+        "301": 7908,
+        "302": 2376
+      },
+      "people": {
+        "200": 153,
+        "301": 807,
+        "302": 244
+      }
+    },
+    {
+      "lo": 41,
+      "hi": 50,
+      "counts": {
+        "200": 1046,
+        "301": 7221,
+        "302": 2076
+      },
+      "people": {
+        "200": 125,
+        "301": 741,
+        "302": 226
+      }
+    },
+    {
+      "lo": 51,
+      "hi": 60,
+      "counts": {
+        "200": 942,
+        "301": 6502,
+        "302": 1962
+      },
+      "people": {
+        "200": 105,
+        "301": 671,
+        "302": 214
+      }
+    },
+    {
+      "lo": 61,
+      "hi": 70,
+      "counts": {
+        "200": 721,
+        "301": 5992,
+        "302": 25020
+      },
+      "people": {
+        "200": 83,
+        "301": 618,
+        "302": 2914
+      }
+    },
+    {
+      "lo": 71,
+      "hi": null,
+      "counts": {
+        "200": 10818,
+        "301": 94998,
+        "302": 924
+      },
+      "people": {
+        "200": 1600,
+        "301": 8572,
+        "302": 507
+      }
+    }
+  ],
+  "gap_quality": {
+    "player_pools": 46780,
+    "eligible_player_pools": 46780,
+    "ambiguous_pulls": 0,
+    "item_type_review_pulls": 10404
+  },
+  "items": [
+    {
+      "name": "雷电将军",
+      "pulls": 16824,
+      "people": 9831
+    },
+    {
+      "name": "莫娜",
+      "pulls": 15003,
+      "people": 6302
+    },
+    {
+      "name": "迪卢克",
+      "pulls": 14865,
+      "people": 6204
+    },
+    {
+      "name": "刻晴",
+      "pulls": 14788,
+      "people": 6179
+    },
+    {
+      "name": "七七",
+      "pulls": 14767,
+      "people": 6184
+    },
+    {
+      "name": "琴",
+      "pulls": 14701,
+      "people": 6212
+    },
+    {
+      "name": "神里绫华",
+      "pulls": 9992,
+      "people": 7045
+    },
+    {
+      "name": "钟离",
+      "pulls": 8941,
+      "people": 7586
+    },
+    {
+      "name": "胡桃",
+      "pulls": 7960,
+      "people": 5520
+    },
+    {
+      "name": "八重神子",
+      "pulls": 7944,
+      "people": 5512
+    },
+    {
+      "name": "甘雨",
+      "pulls": 7805,
+      "people": 6094
+    },
+    {
+      "name": "夜兰",
+      "pulls": 7801,
+      "people": 5018
+    }
+  ],
+  "privacy": {
+    "minimum_people": 5,
+    "people_semantics": "months/items/gap_bins 为贡献人数保守下界；其余为对应聚合内去重账号数"
+  }
+}

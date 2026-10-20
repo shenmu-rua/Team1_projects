@@ -1,0 +1,22 @@
+{
+  "deck_version": "1.1.0",
+  "created_at": "2026-10-19T23:59:56.124087+08:00",
+  "slides": 32,
+  "charts": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07"
+  ],
+  "offline": true,
+  "source_config": "3cee80f4",
+  "source_ads_sha256": "8b46a397333b1bd893c77f2d2dc0f8c9992e827921b0baa7fa25f4d7a2549f9f",
+  "builder_sha256": "ae70d398dfd4fe23502dc91da0ebd07c8b3bc457211306b65a7ddb1f07177e12",
+  "speech_sha256": "e05e570d9f640c711de58b8d2d03062aea66e49e5efc8133e0fb3b927e10f33c",
+  "speech_cjk_characters": 7544,
+  "template_sha256": "3442973753a16529c209465d07203de9213282fd4d730c73fa45529ff16d71f2",
+  "font_license_sha256": "8d27031b6bccd14b1e1a3ead6530b7da83845b165a2643ee09844f8527f67159"
+}
