@@ -688,7 +688,7 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     )
     h("5.3　流水线与复现")
     p(
-        f"处理依次由clean、make_charts.py、make_defense.py及make_report.py显式运行，本地import复用各层逻辑，路径使用pathlib，导入不连接数据库或读取业务文件。图表配置为{manifest['settings']['version']}+{manifest['config_hash']}，清洗规则为{audit['rule_version']}。清单保留来源文件元信息、配置和代码哈希；文件元信息用于区分输入，不等同全库内容哈希。"
+        f"处理依次由统一入口的clean、charts、defense及report子命令显式运行，本地import复用各层逻辑，路径使用pathlib，导入不连接数据库或读取业务文件。图表配置为{manifest['settings']['version']}+{manifest['config_hash']}，清洗规则为{audit['rule_version']}。清单保留来源文件元信息、配置和代码哈希；文件元信息用于区分输入，不等同全库内容哈希。"
     )
 
     h("6　维度与参考数据质量评估", 1)
@@ -936,7 +936,7 @@ def compose(report: TemplateReport, data: dict, audit: dict, manifest: dict, fig
     )
     h("C.2　来源与复现")
     p(
-        f"聚合来源为image/analysis_20261019_final/ads.json，图表配置{manifest['settings']['version']}+{manifest['config_hash']}。自动稽核来源为对应清洗运行的JSON报告。执行make_report.py通过本地import调用模板填充与报告图表；不连接原始库或清洗库。本次构建的模板与聚合哈希保存在报告目录的build_manifest.json。"
+        f"聚合来源为image/analysis_20261019_final/ads.json，图表配置{manifest['settings']['version']}+{manifest['config_hash']}。自动稽核来源为对应清洗运行的JSON报告。执行python -m genshin_insight report通过本地import调用模板填充与报告图表；不连接原始库或清洗库。本次构建的模板与聚合哈希保存在报告目录的build_manifest.json。"
     )
 
     h("附录 D　术语与缩写", 1)
@@ -1011,7 +1011,8 @@ def build(template: Path, analysis: Path, output: Path, *, replace: bool = False
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="按指定Word模板导出原神数据质量与分析报告，只读发布聚合。"
+        prog="genshin-insight report",
+        description="按指定Word模板导出原神数据质量与分析报告，只读发布聚合。",
     )
     parser.add_argument("--template", required=True, type=Path)
     parser.add_argument(

@@ -47,12 +47,13 @@
 | 命令行入口 | `src/genshin_insight/__main__.py` | 第 2 条，单独管理调用方式 |
 | 图表主题接入和保存前检查 | `src/genshin_insight/viz/` | 第 2、12 条 |
 | 图表应用层聚合及小样本保护 | `src/genshin_insight/ads.py` | 第 1、2、5 条 |
-| 图集调度与短入口 | `src/genshin_insight/charts.py`、`make_charts.py` | 第 2、3 条；用户要求本地 import |
-| HTML答辩制作与短入口 | `src/genshin_insight/defense.py`、`make_defense.py` | 第 2、12 条；复用已发布ADS |
+| 统一命令入口 | `src/genshin_insight/__main__.py` | 第 2、3 条；子命令按需本地import，不在根目录保留包装脚本 |
+| 图集调度 | `src/genshin_insight/charts.py` | 第 2、3 条；用户要求本地 import |
+| HTML答辩制作 | `src/genshin_insight/defense.py` | 第 2、12 条；复用已发布ADS |
 | 完整逐页口播与术语说明 | `src/genshin_insight/speech.py` | 第 2 条；内容与演示版式分别维护 |
-| 开场片制作调度、原创配乐 | `src/genshin_insight/opener.py`、`score.py`、`make_opener.py` | 第 2、3 条；只复用发布ADS，本地import |
-| 开场片动画、播放器与编码 | `src/genshin_insight/viz/opener*.html`、`render_opener.cjs` | 第 2、12 条；40秒原生图表动画，16:9 |
-| Word模板填充与报告制作 | `src/genshin_insight/report.py`、`make_report.py` | 第 2、3、15.1 条；只读取已发布ADS与聚合稽核 |
+| 开场片制作调度、视频与原声裁切 | `src/genshin_insight/opener.py` | 第 2、3 条；只复用发布ADS，本地import |
+| 开场片动画、播放器与编码 | `src/genshin_insight/viz/opener*.html`、`render_opener.cjs` | 第 2、12 条；40秒透明图表前景及1.2秒自然白场，16:9、60fps |
+| Word模板填充与报告制作 | `src/genshin_insight/report.py` | 第 2、3、15.1 条；只读取已发布ADS与聚合稽核 |
 | A4报告图表适配 | `src/genshin_insight/viz/report_plots.py` | 第 2、12 条；15.4厘米物理宽度，实际刻度不小于8磅 |
 | 答辩版式、交互与字体许可 | `src/genshin_insight/viz/defense.html`、`font_license.txt` | 第 2、12 条；沿用蓝粉主题 |
 | 既有蓝粉引擎与自检 | `theme/` | `theme/SKILL.md`，保持单一来源 |
@@ -72,6 +73,8 @@ import 时不连接数据库、不读业务文件、不建目录、不修改绘�
 - 数据、压缩包、数据库、notebook 输出和生成图不提交；不向模型打印明细内容。
 - 使用蓝粉主题。颜色按角色固定；只用开源字体；200 dpi；PPT 严格 16:9。
 - 答辩开场短片经用户明确授权自由发挥视觉主题，采用深色星空和金色主强调；统计图仍遵守零基线、单轴、保护聚合与来源可追溯要求。既有PPT继续使用蓝粉主题。
+- 2026-10-20用户明确替换开场背景：保留文字和图表动效，背景只播放指定夜间开门视频及其原声，取消旧背景动效和旧配乐。图表时间线40秒，随后自然入门白场；变白前清空前景与按钮，全部白屏后无缝进入现有32页答辩。
+- 用户进一步要求精简并提交推送：统一使用`python -m genshin_insight`子命令，删除根目录四个包装脚本和停用配乐模块；交付目录只保留播放必需文件，中间背景、母版和字体子集只写项目缓存，完成构建后清理。
 - 图表调用 `viz.finish()`，标题数字来自计算，副标题说明口径，来源可追溯。
 - 保存统一调用 `viz.save()` 先自检；模拟数据必须加水印。
 - 分析报告与答辩不包含Q01数据集范围章节；Q01仅保留为内部图集诊断。HTML只复用受保护ADS和清洗聚合报告，图表导出带可编辑文字的SVG。

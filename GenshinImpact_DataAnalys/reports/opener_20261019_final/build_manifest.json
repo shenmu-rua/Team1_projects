@@ -1,9 +1,25 @@
 {
-  "video_version": "1.0.0",
-  "duration_seconds": 40,
+  "video_version": "2.1.0",
+  "duration_seconds": 41.2,
+  "graphics_duration_seconds": 40.0,
   "width": 1920,
   "height": 1080,
-  "fps": 30,
+  "fps": 60,
+  "encoding": {
+    "video": "H.264",
+    "preset": "slow",
+    "crf": 23,
+    "audio": "AAC 160k"
+  },
+  "timing": {
+    "duration": 41.2,
+    "graphicsDuration": 40.0,
+    "fadeStart": 39.6,
+    "whiteAt": 41.0,
+    "sourceStart": 75.2,
+    "sourceEnd": 116.4,
+    "fps": 60
+  },
   "scenes": [
     [
       0,
@@ -44,10 +60,11 @@
   "dataset": 3,
   "source_config": "3cee80f4",
   "source_ads_sha256": "8b46a397333b1bd893c77f2d2dc0f8c9992e827921b0baa7fa25f4d7a2549f9f",
-  "background_sha256": "4fe4a81988eca1721f707c7a4ef11e8e2d660e2640a5e965fc066e0221dd404a",
-  "background_generation": "imagegen built-in tool",
-  "background_prompt": "Create a cinematic widescreen 16:9 background plate for an elegant Chinese academic data-analysis opening film about Genshin gacha records. Use case: abstract fantasy cosmic environment / motion-design background, NOT an infographic. Rich near-black midnight indigo space, sweeping delicate champagne-gold and ice-blue meteor trails along the lower third and outer edges, tiny luminous star dust, subtle violet nebula volume, a large elegant luminous wish-like streak travelling diagonally into the distance. Premium blockbuster title-sequence quality, beautiful volumetric light and refined restrained gold, dimensional depth, sharp fine details, no cartoon. Reserve the broad central 70% of the image as very dark, calm negative space for large data typography and charts to be added later. Left-center must especially remain dark and uncluttered. No text, letters, numbers, logos, icons, data charts, interface panels, people, recognizable characters, or watermark. Full bleed 3840x2160 composition if possible.",
-  "music": "Original local synthesis; no voice or external samples",
+  "source_video": "原神_登录界面4-夜间开门_1080P60_BV1m44y1K7PJ.mp4",
+  "source_video_sha256": "b8074dbd8db0fa5eeb7f67297fbf75ac17cb0d092fa301a6155474c3843c0872",
+  "background_sha256": "e5e8537daa1c0bc42623c167ff7d07f63101a02beb720ad328fb78e55d8c67ec",
+  "background_motion": "User-provided video at original speed; no added background animation",
+  "music": "Original audio from the same source-video interval; short edge fades only",
   "metrics": {
     "pulls": 15598804,
     "people": 16289,
@@ -224,10 +241,21 @@
     ]
   },
   "code_sha256": {
-    "opener.py": "7c34a4c4898078dab0aeb1a58bbf85a869036ec7ae487e1f95942cf9a3fc157d",
-    "score.py": "6e35075830c0f73f6e2b893899b867894b44f76223aaf589c392ba01050100a3",
-    "opener.html": "bc2215c00abbc644c73141de08660739813637744ba38dbc32dc010886e85297",
-    "render_opener.cjs": "55bdfc2fb270917c2124fed2464b09d66ee6844cb3243918372fb24f6dd2c849",
-    "opener_player.html": "a9754fa50a7abba59235f3e67c3a9c34b006e0acfe28e9204633200a17fec40b"
+    "opener.py": "62422bcb5a645ce50303f3f197b3e8de392ae5bcf917e5d06fac3b29ff53122e",
+    "opener.html": "759066b807308748ec52f59accf84bbed36c3b5eb1559008fb62208a8f0d1891",
+    "render_opener.cjs": "71846e2c89be59f7df149394fea502aced6dd1d00e16d7155c33ca1505385968",
+    "opener_player.html": "f7229d35e0584cd141acb9bc4d34ab3f9c5f51560cf3a91fcf2ff14baa855775"
+  },
+  "output_video_sha256": "a0775a64a67b309c80f8d6e32157bb7575863843db516990ebc804335526eee9",
+  "output_video_bytes": 13722656,
+  "verification": {
+    "unit_and_contract_tests": 75,
+    "layout_probes": 7,
+    "pure_white_tail_verified": true,
+    "automatic_handoff_verified": true,
+    "keyboard_navigation_verified": true,
+    "original_audio_correlation": 0.9999306214447857,
+    "delivery_dependencies_verified": true,
+    "intermediate_media_removed": true
   }
 }

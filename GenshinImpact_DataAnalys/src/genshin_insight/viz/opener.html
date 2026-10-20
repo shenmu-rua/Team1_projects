@@ -6,20 +6,19 @@
 <style>
 @font-face{font-family:Opener;src:url(data:font/woff;base64,__FONT__) format('woff');font-weight:100 900;font-display:block}
 *{box-sizing:border-box}html,body{margin:0;background:#030611;color:#fff;font-family:Opener,sans-serif;height:100%;overflow:hidden}
-main{height:100%;display:grid;place-items:center}canvas{width:min(100vw,177.7778vh);height:auto;aspect-ratio:16/9;display:block}
+main{height:100%;display:grid;place-items:center}.stage{position:relative;width:min(100vw,177.7778vh);aspect-ratio:16/9}video,canvas{position:absolute;inset:0;width:100%;height:100%;display:block}video{object-fit:contain}
 #controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;padding:10px 18px;background:#070d20e8;border-radius:8px;opacity:0;transition:opacity .2s}
 body:hover #controls,body:focus-within #controls{opacity:1}button{font:inherit;color:#fff;background:none;border:1px solid #71809b;padding:6px 14px;cursor:pointer}input{width:240px;accent-color:#e6c68c}span{font-size:14px;font-variant-numeric:tabular-nums}
 </style>
-<main><canvas id="film" width="1920" height="1080" aria-label="40秒原神数据分析开场动画"></canvas></main>
-<div id="controls"><button id="play">播放</button><input id="seek" type="range" min="0" max="40" step="0.01" value="0" aria-label="播放位置"><span id="time">00:00 / 00:40</span><button id="full">全屏</button></div>
+<main><div class="stage"><video id="background" src="assets/background.mp4" preload="auto" playsinline></video><canvas id="film" width="1920" height="1080" aria-label="40秒原神数据分析图表及入门白场"></canvas></div></main>
+<div id="controls"><button id="play">播放</button><input id="seek" type="range" min="0" max="41.2" step="0.01" value="0" aria-label="播放位置"><span id="time"></span><button id="full">全屏</button></div>
 <script id="font-license" type="text/plain">__FONT_LICENSE__</script>
 <script>
-const DATA=__DATA__,SCENES=__SCENES__,FOOTER='__FOOTER__';
-const canvas=document.getElementById('film'),ctx=canvas.getContext('2d',{alpha:false});
+const DATA=__DATA__,SCENES=__SCENES__,TIMING=__TIMING__,FOOTER='__FOOTER__';
+const canvas=document.getElementById('film'),ctx=canvas.getContext('2d',{alpha:true}),background=document.getElementById('background');
 const C={white:'#f7f5ef',gold:'#e6c68c',cyan:'#91c9e5',muted:'#b0bbce',axis:'#5d708d',faint:'#8996ad',gray:'#7e8a9e',navy:'#050917'};
-const bg=new Image();bg.src='data:image/png;base64,__BACKGROUND__';
 const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>1-(1-clamp(x))**3,fmt=x=>Math.round(x).toLocaleString('en-US');
-const frames={text:[],errors:[]};let activeScene=0,lastTime=0,playing=false,anchor=0,raf=0;
+const frames={text:[],errors:[]};let lastTime=0,playing=false,raf=0;
 
 function text(value,x,y,size=40,color=C.white,options={}){
   ctx.save();ctx.font=`${options.weight||400} ${size}px Opener`;ctx.textAlign=options.align||'left';ctx.textBaseline='alphabetic';ctx.fillStyle=color;
@@ -28,18 +27,19 @@ function text(value,x,y,size=40,color=C.white,options={}){
   const m=ctx.measureText(String(value)),left=x-(ctx.textAlign==='center'?m.width/2:ctx.textAlign==='right'?m.width:0);
   const box={value:String(value),left,top:y-m.actualBoundingBoxAscent,right:left+m.width,bottom:y+m.actualBoundingBoxDescent};frames.text.push(box);
   if(box.left<110||box.right>1810||box.top<65||box.bottom>1050)frames.errors.push(box);
-  ctx.fillText(value,x,y);ctx.restore();
+  ctx.fillText(value,x,y);ctx.restore();return box;
 }
 function line(points,color,width=3){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
 function number(value,progress,x,y,size,color=C.gold,decimals=0){const n=value*ease(progress);text(decimals?n.toFixed(decimals):fmt(n),x,y,size,color,{weight:700,glow:16});}
 function heading(title,subtitle){text(title,144,211,54,C.white,{weight:700});if(subtitle)text(subtitle,145,268,28,C.muted);}
 function footer(note='仅描述样本留存记录'){text(FOOTER,144,1034,22,C.faint);text(note,1776,1034,22,C.faint,{align:'right'});}
-function hbars(rows,progress,{x=1030,y=400,width=690,rowHeight=110,max=20000,color=C.gold,labelsX=765,format=fmt}={}){
+function hbars(rows,progress,{x=1030,y=400,width=690,rowHeight=110,max=20000,color=C.gold,labelsX=765,format=fmt,alignRows=false}={}){
   rows.forEach((row,i)=>{
     const p=ease(progress-i*.11),colorHere=i===0?color:C.gray,yy=y+i*rowHeight;
-    text(row.name,labelsX,yy,31,i===0?C.white:C.muted,{weight:i===0?700:400});
-    text(format(row.count),1776,yy,31,i===0?color:C.muted,{align:'right',weight:i===0?700:400});
-    ctx.fillStyle=colorHere;ctx.shadowColor=colorHere;ctx.shadowBlur=i===0?14:0;ctx.fillRect(x,yy+24,width*row.count/max*p,27);ctx.shadowBlur=0;
+    const label=text(row.name,labelsX,yy,31,i===0?C.white:C.muted,{weight:i===0?700:400});
+    const value=text(format(row.count),1776,yy,31,i===0?color:C.muted,{align:'right',weight:i===0?700:400});
+    const barTop=alignRows?(Math.min(label.top,value.top)+Math.max(label.bottom,value.bottom)-27)/2:yy+24;
+    ctx.fillStyle=colorHere;ctx.shadowColor=colorHere;ctx.shadowBlur=i===0?14:0;ctx.fillRect(x,barTop,width*row.count/max*p,27);ctx.shadowBlur=0;
   });
   const yy=y+(rows.length-1)*rowHeight+75;
   line([[x,yy],[x+width,yy]],C.axis,1.5);
@@ -98,7 +98,7 @@ function names(u){
   const top=DATA.items[0];heading(`五星原始名称中，${top.name}记录最多`,'按精确原始名称统计，未合并翻译别名');
   text(top.name,144,486,101,C.white,{weight:700});number(top.count,u/1.2,144,650,116);text('次',620,648,53,C.gold);
   text('留存记录出现次数',150,732,31,C.muted);
-  hbars(DATA.items,u/1.1,{x:1075,y:369,width:600,rowHeight:105,max:Math.ceil(top.count/5000)*5000,labelsX:825});
+  hbars(DATA.items,u/1.1,{x:1075,y:369,width:600,rowHeight:105,max:Math.ceil(top.count/5000)*5000,labelsX:825,alignRows:true});
   text('次数，零起点',1776,974,25,C.muted,{align:'right'});footer('原始名称榜，仅描述样本记录');
 }
 function ending(u){
@@ -109,24 +109,35 @@ function ending(u){
 }
 const sceneDraw=[intro,scale,pools,months,volume,names,ending];
 function renderFrame(t){
-  t=Math.min(39.999,Math.max(0,t));lastTime=t;frames.text=[];frames.errors=[];
-  ctx.globalAlpha=1;ctx.fillStyle=C.navy;ctx.fillRect(0,0,1920,1080);
-  const i=SCENES.findIndex(([start,end])=>t>=start&&t<end),scene=SCENES[i];activeScene=i;
-  ctx.save();const zoom=1.05+.018*Math.sin(t*.2);ctx.translate(960+18*Math.sin(t*.12),540+8*Math.cos(t*.16));ctx.scale(zoom,zoom);ctx.translate(-960,-540);
-  const ratio=Math.max(1920/bg.width,1080/bg.height);ctx.globalAlpha=i===0||i===6?.8:.34;ctx.drawImage(bg,(1920-bg.width*ratio)/2,(1080-bg.height*ratio)/2,bg.width*ratio,bg.height*ratio);ctx.restore();
-  ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=(i===0||i===6?.14:.07)*(.7+.3*Math.sin(t*.7));ctx.translate(960+60*Math.sin(t*.17),540);ctx.rotate(.025*Math.sin(t*.13));ctx.scale(1.12,1.12);ctx.translate(-960,-540);ctx.drawImage(bg,0,0,1920,1080);ctx.restore();
-  ctx.fillStyle=`rgba(3,6,17,${i===0||i===6?.10:.38})`;ctx.fillRect(0,0,1920,1080);
-  const u=t-scene[0],tail=i===6?1:clamp((scene[1]-t)/.42);ctx.globalAlpha=ease(u/.55)*tail;
-  ctx.save();ctx.translate(0,24*(1-ease(u/.65)));sceneDraw[i](u);ctx.restore();ctx.globalAlpha=1;
-  document.getElementById('seek').value=t;document.getElementById('time').textContent=`00:${String(Math.floor(t)).padStart(2,'0')} / 00:40`;
-  return {scene:i,title:scene[2],errors:frames.errors,text:frames.text};
+  t=Math.min(TIMING.duration,Math.max(0,t));lastTime=t;frames.text=[];frames.errors=[];
+  ctx.globalAlpha=1;ctx.clearRect(0,0,1920,1080);
+  const i=SCENES.findIndex(([start,end])=>t>=start&&t<end),scene=SCENES[i];
+  const visibility=1-clamp((t-TIMING.fadeStart)/(TIMING.graphicsDuration-TIMING.fadeStart));
+  if(scene&&visibility>0){
+    // Static contrast only. The supplied video supplies all background motion.
+    ctx.globalAlpha=.42*visibility;ctx.fillStyle='#030611';ctx.fillRect(0,0,1920,1080);
+    const u=t-scene[0],tail=i===6?1:clamp((scene[1]-t)/.42);ctx.globalAlpha=ease(u/.55)*tail*visibility;
+    ctx.save();ctx.translate(0,24*(1-ease(u/.65)));sceneDraw[i](u);ctx.restore();
+  }
+  ctx.globalAlpha=1;
+  document.getElementById('seek').value=t;document.getElementById('time').textContent=`${t.toFixed(1)} / ${TIMING.duration.toFixed(1)} 秒`;
+  return {scene:scene?i:7,title:scene?scene[2]:'入门白场',errors:frames.errors,text:frames.text,foregroundVisible:visibility>0};
 }
-window.renderFrame=renderFrame;window.filmData=DATA;window.filmScenes=SCENES;window.filmReady=false;
-function pause(){playing=false;cancelAnimationFrame(raf);document.getElementById('play').textContent='播放';}
-function tick(){if(!playing)return;const t=(performance.now()-anchor)/1000;if(t>=40){renderFrame(39.999);pause();return;}renderFrame(t);raf=requestAnimationFrame(tick);}
-document.getElementById('play').onclick=()=>{if(playing)pause();else{if(lastTime>39.9)lastTime=0;playing=true;anchor=performance.now()-lastTime*1000;document.getElementById('play').textContent='暂停';tick();}};
-document.getElementById('seek').oninput=event=>{pause();renderFrame(Number(event.target.value));};
+window.renderFrame=renderFrame;window.filmData=DATA;window.filmScenes=SCENES;window.filmTiming=TIMING;window.filmReady=false;
+async function seekFilm(t){
+  const position=Math.min(TIMING.duration-.001,Math.max(0,t));
+  if(Math.abs(background.currentTime-position)>.0001){await new Promise((resolve,reject)=>{background.addEventListener('seeked',resolve,{once:true});background.addEventListener('error',reject,{once:true});background.currentTime=position;});}
+  return renderFrame(t);
+}
+window.seekFilm=seekFilm;
+function pause(){playing=false;background.pause();cancelAnimationFrame(raf);document.getElementById('play').textContent='播放';}
+function tick(){if(!playing)return;renderFrame(background.currentTime);raf=requestAnimationFrame(tick);}
+background.onended=()=>{renderFrame(TIMING.duration);pause();};
+document.getElementById('play').onclick=async()=>{if(playing)pause();else{if(lastTime>=TIMING.duration-.1)await seekFilm(0);await background.play();playing=true;document.getElementById('play').textContent='暂停';tick();}};
+document.getElementById('seek').max=TIMING.duration;
+document.getElementById('seek').oninput=event=>{pause();seekFilm(Number(event.target.value));};
 document.getElementById('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
-Promise.all([bg.decode(),document.fonts.load('700 40px Opener'),document.fonts.ready]).then(()=>{renderFrame(2.6);window.filmReady=true;}).catch(error=>{document.body.dataset.error=error.message;throw error;});
+const videoReady=background.readyState>=2?Promise.resolve():new Promise((resolve,reject)=>{background.addEventListener('loadeddata',resolve,{once:true});background.addEventListener('error',reject,{once:true});});
+Promise.all([videoReady,document.fonts.load('700 40px Opener'),document.fonts.ready]).then(async()=>{await seekFilm(2.6);window.filmReady=true;}).catch(error=>{document.body.dataset.error=String(error);throw error;});
 </script>
 </html>

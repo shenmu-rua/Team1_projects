@@ -46,7 +46,9 @@ def generate(data: dict, output: Path, version: str) -> list[Path]:
     plt.rcParams.update({"font.size": 8.5, "axes.labelsize": 8.5})
     output.mkdir(parents=True, exist_ok=True)
     paths = []
-    source = f"来源：原神留存抽卡记录 主分析03\n制作：make_report.py  图表{version}  清洗1.0.0"
+    source = (
+        f"来源：原神留存抽卡记录 主分析03\n制作：genshin-insight report  图表{version}  清洗1.0.0"
+    )
 
     def page(title, subtitle, height=5.0):
         fig = plt.figure(figsize=(15.4 / 2.54, height), facecolor=theme.BG)

@@ -47,6 +47,18 @@ def test_help_never_opens_database(monkeypatch, capsys):
     assert "schema" in capsys.readouterr().out
 
 
+@pytest.mark.parametrize("command", ["schema", "clean", "charts", "defense", "opener", "report"])
+def test_all_subcommand_help_is_available_without_database_access(monkeypatch, capsys, command):
+    def denied_connection(*args, **kwargs):
+        raise AssertionError("帮助命令不应连接数据库")
+
+    monkeypatch.setattr(sqlite3, "connect", denied_connection)
+    with pytest.raises(SystemExit) as stopped:
+        main([command, "--help"])
+    assert stopped.value.code == 0
+    assert "--help" in capsys.readouterr().out
+
+
 def test_imports_do_not_connect_read_files_create_directories_or_load_matplotlib():
     project_root = config.PROJECT_ROOT
     environment = os.environ.copy()
@@ -72,7 +84,6 @@ with patch.object(sqlite3, 'connect', denied), patch.object(Path, 'open', denied
     import genshin_insight.defense
     import genshin_insight.speech
     import genshin_insight.opener
-    import genshin_insight.score
     import genshin_insight.report
     import genshin_insight.viz.report_plots
     import genshin_insight.viz.plots

@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-10-19T23:59:57.716784</dc:date>
+    <dc:date>2026-10-20T16:58:26.526195</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -288,7 +288,7 @@ z
    <text style="font-size: 12px; font-family: 'Noto Sans SC', 'Source Han Sans SC', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'DejaVu Sans'; text-anchor: start; fill: #8b97ae" x="86.4" y="90.4" transform="rotate(-0 86.4 90.4)">五星占比＝记录内五星数÷抽数；受样本选择与记录完整性影响，不代表官方概率</text>
   </g>
   <g id="text_30">
-   <text style="font-size: 9.5px; font-family: 'Noto Sans SC', 'Source Han Sans SC', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'DejaVu Sans'; text-anchor: start; fill: #8b97ae" x="86.4" y="627.537406" transform="rotate(-0 86.4 627.537406)">数据来源：原神清洗抽卡记录·主分析03；脚本：make_charts.py / make_defense.py；配置 0.3.0+3cee80f4 / 清洗1.0.0</text>
+   <text style="font-size: 9.5px; font-family: 'Noto Sans SC', 'Source Han Sans SC', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'DejaVu Sans'; text-anchor: start; fill: #8b97ae" x="86.4" y="627.414203" transform="rotate(-0 86.4 627.414203)">数据来源：原神清洗抽卡记录·主分析03；脚本：genshin-insight charts / defense；配置 0.3.0+3cee80f4 / 清洗1.0.0</text>
   </g>
  </g>
  <defs>

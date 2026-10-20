@@ -68,7 +68,7 @@ def generate(database: Path | None = None, output: Path | None = None, dataset: 
     ).hexdigest()[:8]
     source = viz.load_theme().source_line(
         f"原神抽卡公开记录·清洗库（DS{dataset:02d}；Q01含其他来源）",
-        "make_charts.py",
+        "genshin-insight charts",
         f"{config.CHART_CONFIG_VERSION}+{digest} / 清洗{data['provenance']['rule_version']}",
     )
     figures = []
@@ -84,7 +84,7 @@ def generate(database: Path | None = None, output: Path | None = None, dataset: 
         Path(config.__file__),
         Path(viz.__file__),
         Path(viz.__file__).with_name("plots.py"),
-        config.PROJECT_ROOT / "make_charts.py",
+        Path(__file__).with_name("__main__.py"),
         config.PROJECT_ROOT / "theme/theme.py",
         config.PROJECT_ROOT / "theme/spec_check.py",
     ]
@@ -131,7 +131,7 @@ def generate(database: Path | None = None, output: Path | None = None, dataset: 
     report += [
         "## 复现与保护",
         "",
-        "在项目根目录运行 `python make_charts.py --database <清洗库路径>`。未安装包时先设置 `PYTHONPATH=src;.`。",
+        "在项目根目录运行 `python -m genshin_insight charts --database <清洗库路径>`。未安装包时先设置 `PYTHONPATH=src;.`。",
         "入口通过本地 import 调用 ADS、绘图和主题；首次运行需安装项目的 analysis、viz 依赖及开源中文字体。",
         f"配置：{config.CHART_CONFIG_VERSION}+{digest}；全部为16:9、3200×1800像素、200 dpi；保存前执行主题自检。",
         "不足5个贡献账号的格子在ADS置空并做互补抑制；分布合并相邻箱。月份、名称与间隔分箱的贡献人数使用保守下界。",
@@ -144,7 +144,9 @@ def generate(database: Path | None = None, output: Path | None = None, dataset: 
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="使用本地蓝粉主题生成完整原神分析图集，无双Y轴。")
+    parser = argparse.ArgumentParser(
+        prog="genshin-insight charts", description="使用本地蓝粉主题生成完整原神分析图集，无双Y轴。"
+    )
     parser.add_argument("--database", type=Path, help="默认取本项目最新的清洗库")
     parser.add_argument("--output", type=Path, help="项目内尚不存在的输出目录")
     parser.add_argument("--dataset", type=int, default=3, help="主分析来源，默认03")

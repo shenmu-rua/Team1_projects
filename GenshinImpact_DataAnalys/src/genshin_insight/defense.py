@@ -339,7 +339,7 @@ def make_slides(data: dict, audit: dict, manifest: dict) -> list[dict]:
         "NumPy提供分位数计算，Matplotlib统一主题。模块导入不触发真实数据读取或绘图副作用，所有处理由显式函数调用开始。"
         "HTML制作进一步复用已经发布的ADS和图表函数，因此不需要重新读取数据库明细。",
         "实现方法",
-        "make_charts.py；src/genshin_insight/{ads,charts,config}.py；viz/",
+        "src/genshin_insight/{__main__,ads,charts,config}.py；viz/",
     )
 
     add(
@@ -682,7 +682,7 @@ def make_slides(data: dict, audit: dict, manifest: dict) -> list[dict]:
     add(
         "复现入口与后续完善",
         '<div class="columns wide-left"><div><h2>在项目目录显式运行</h2>'
-        "<pre>python -m genshin_insight clean\npython make_charts.py\npython make_defense.py</pre>"
+        "<pre>python -m genshin_insight clean\npython -m genshin_insight charts\npython -m genshin_insight defense</pre>"
         '<p class="small muted">未安装包时先设置PYTHONPATH=src;.；清洗与图集生成新目录，HTML从既有ADS和聚合稽核制作。</p>'
         "</div><div><h2>后续工作</h2>"
         + rows(
@@ -697,7 +697,7 @@ def make_slides(data: dict, audit: dict, manifest: dict) -> list[dict]:
         "每次图集保留配置、环境与输入元信息，HTML另外记录构建来源。下一步优先处理语义映射和时间覆盖问题，"
         "这些证据决定后续可以提出多强的分析结论。",
         "结论与答辩",
-        "README.md；make_charts.py；make_defense.py；manifest.json",
+        "README.md；src/genshin_insight/__main__.py；manifest.json",
     )
 
     add(
@@ -858,7 +858,7 @@ def build(
     matplotlib.rcParams.update({"svg.fonttype": "none", "svg.hashsalt": "genshin-defense"})
     source = theme.source_line(
         "原神清洗抽卡记录·主分析03",
-        "make_charts.py / make_defense.py",
+        "genshin-insight charts / defense",
         f"{manifest['settings']['version']}+{manifest['config_hash']} / 清洗{audit['rule_version']}",
     )
     charts = {}
@@ -975,7 +975,8 @@ def build(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="复用受保护聚合，制作蓝粉HTML答辩演示，不读取数据库。"
+        prog="genshin-insight defense",
+        description="复用受保护聚合，制作蓝粉HTML答辩演示，不读取数据库。",
     )
     parser.add_argument("--analysis", type=Path, help="已有ADS与manifest的图集目录")
     parser.add_argument("--output", type=Path, help="项目内尚不存在的输出目录")

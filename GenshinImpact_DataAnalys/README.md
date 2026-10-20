@@ -36,7 +36,6 @@ GenshinImpact_DataAnalys/
 │   ├── charts.py               # 图集制作调度
 │   ├── __main__.py             # schema / clean / charts 子命令
 │   └── viz/                   # 蓝粉主题适配和保存前自检
-├── make_charts.py              # 六行本地 import 制图入口
 ├── theme/                      # 已有主题引擎与规范自检，保持单一来源
 ├── docs/                       # 规范、结构字典与阶段记录
 ├── test/{unit,contract}/        # 临时空表与合成记录，不连真实库
@@ -92,9 +91,9 @@ python -m genshin_insight --help
 安装依赖后，在本目录运行：
 
 ```powershell
-python make_charts.py
+python -m genshin_insight charts
 # 或显式指定清洗库；输出目录必须尚不存在且位于本项目内部
-python make_charts.py --database .\data\genshin_clean_<运行编号>.db --output .\image\my_analysis
+python -m genshin_insight charts --database .\data\genshin_clean_<运行编号>.db --output .\image\my_analysis
 ```
 
 未安装本地包时先设置 `$env:PYTHONPATH = 'src;.'`。也可在 Python 中直接调用：
@@ -115,7 +114,7 @@ output = generate()  # 默认选择本项目最新清洗库、主分析数据集
 安装 `.[analysis,viz,presentation]` 后，从已有图集制作离线演示：
 
 ```powershell
-python make_defense.py --analysis .\image\analysis_20261019_final
+python -m genshin_insight defense --analysis .\image\analysis_20261019_final
 ```
 
 入口通过本地 `import` 调用 `genshin_insight.defense.build()`，只读取受保护ADS与清洗聚合稽核，
@@ -130,27 +129,35 @@ HTML内嵌七张SVG与开源字体子集，可以单独复制后离线打开。�
 需要按最新内容更新已有答辩目录时显式使用：
 
 ```powershell
-python make_defense.py --analysis .\image\analysis_20261019_final --output .\reports\defense_20261019_final --replace
+python -m genshin_insight defense --analysis .\image\analysis_20261019_final --output .\reports\defense_20261019_final --replace
 ```
 
 ## 答辩开场视频
 
-`reports/opener_20261019_final/开场视频.mp4` 为40秒、1920×1080、30fps的H.264/AAC短片，
-含原创电子配乐。用户允许片头自由发挥主题，采用深色星空与金色强调，依次展示主分析记录规模、
-卡池构成、月度峰值、账号记录量和五星原始名称榜。所有数字来自既有受保护ADS，不连接数据库。
+`reports/opener_20261019_final/开场视频.mp4` 为1920×1080、60fps的H.264/AAC短片，
+保留原有40秒文字和图表时间线，随后以1.2秒完成视频自身的入门白场，总长41.2秒。
+背景和原声均使用用户提供的夜间开门视频，从源视频75.2秒裁到116.4秒，原速播放；
+取消旧星空背景的缩放、漂移、脉冲和叠光，不混入原开场配乐。
+依次展示主分析记录规模、卡池构成、月度峰值、账号记录量和五星原始名称榜。
+所有数字来自既有受保护ADS，不连接数据库。
 
-打开同目录 `index.html`，点击“播放开场”，视频结束后自动进入现有32页答辩，也可跳过片头。
-此入口与 `defense_20261019_final/` 保持相邻；MP4可独立播放。`motion.html` 是可回放、定位的动画母版。
+打开同目录 `index.html`，点击“播放开场”，图表前景39.6–40秒淡出，40秒起不再有任何文字、
+图表或暗化遮罩；跳过按钮同步隐藏。41秒起全屏纯白，片尾无黑帧接入预加载的现有32页答辩，
+也可提前跳过片头。
+此入口与 `defense_20261019_final/` 保持相邻；MP4可独立播放。交付目录只保留成片、播放入口、
+海报、使用说明、构建清单和字体许可。视频采用H.264 CRF 23 / slow、AAC 160k压缩，保留1080p与60fps。
 
 安装 `.[analysis,viz,presentation,motion]`、本地Node.js的 `playwright` 包及Chrome后，在本项目运行：
 
 ```powershell
-python make_opener.py --background .\reports\opener_20261019_final\assets\cosmic-background.png --output .\reports\opener_new
+python -m genshin_insight opener --background-video "原视频的绝对路径.mp4" --source-end 116.4 --output .\reports\opener_new
 ```
 
-源码通过本地import组织：`opener.py`负责聚合选取和发布，`score.py`生成原创音轨，
-`viz/opener.html`负责确定性的逐帧动画，`viz/render_opener.cjs`用本地Chrome/WebCodecs编码并由FFmpeg封装。
-可通过 `--ffmpeg`、`--node` 指定可执行文件；`--prepare-only`只生成动画母版和音轨。
+源码通过本地import组织：`opener.py`负责聚合选取、视频原声裁切和发布，
+`viz/opener.html`负责透明图表前景，`viz/render_opener.cjs`用本地Chrome导出前景，
+由FFmpeg与60fps背景合成，保留同段原声。背景副本、透明动画母版及字体子集只写
+项目 `.pytest_cache/`，正常构建结束后自动删除；不在交付目录存放重复背景和配乐。
+可通过 `--ffmpeg`、`--node` 指定可执行文件；`--prepare-only`保留项目缓存中的可定位母版并输出其路径。
 如Node包未安装在项目 `node_modules/`，运行前用 `NODE_PATH` 指向已有包目录。
 
 ## 按Word模板导出报告
@@ -158,10 +165,10 @@ python make_opener.py --background .\reports\opener_20261019_final\assets\cosmic
 安装 `.[analysis,viz,report]` 后，在本项目中执行：
 
 ```powershell
-python make_report.py --template "模板的绝对路径.docx" --output .\reports\quality_report_new
+python -m genshin_insight report --template "模板的绝对路径.docx" --output .\reports\quality_report_new
 ```
 
-`make_report.py`通过本地import调用`report.py`填充模板，保留封面、分节页码、标题、表格与目录控件；
+`report`子命令通过本地import调用`report.py`填充模板，保留封面、分节页码、标题、表格与目录控件；
 正文包含十章、七张A4图和四个附录，解释清洗方法、质量结论、图表含义及Q1/Q2等术语。
 它只读取已有ADS和清洗聚合稽核，不连接数据库。`viz/report_plots.py`保持蓝粉主题，
 图宽15.4厘米、200dpi，实际刻度不小于8磅，不使用双Y轴。

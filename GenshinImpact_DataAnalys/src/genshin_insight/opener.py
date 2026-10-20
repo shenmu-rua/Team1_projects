@@ -3,32 +3,22 @@
 from __future__ import annotations
 
 import argparse
-import base64
 import hashlib
 import json
+import math
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 from . import config
 from .ads import MIN_PEOPLE, POOL_NAMES
 from .defense import embed_font, load_release
-from .score import synthesize
 
-BACKGROUND_PROMPT = (
-    "Create a cinematic widescreen 16:9 background plate for an elegant Chinese academic "
-    "data-analysis opening film about Genshin gacha records. Use case: abstract fantasy "
-    "cosmic environment / motion-design background, NOT an infographic. Rich near-black "
-    "midnight indigo space, sweeping delicate champagne-gold and ice-blue meteor trails "
-    "along the lower third and outer edges, tiny luminous star dust, subtle violet nebula "
-    "volume, a large elegant luminous wish-like streak travelling diagonally into the "
-    "distance. Premium blockbuster title-sequence quality, beautiful volumetric light and "
-    "refined restrained gold, dimensional depth, sharp fine details, no cartoon. Reserve "
-    "the broad central 70% of the image as very dark, calm negative space for large data "
-    "typography and charts to be added later. Left-center must especially remain dark and "
-    "uncluttered. No text, letters, numbers, logos, icons, data charts, interface panels, "
-    "people, recognizable characters, or watermark. Full bleed 3840x2160 composition if possible."
-)
+SOURCE_END = 116.4
+GRAPHICS_DURATION = 40.0
+WHITE_TAIL_DURATION = 1.2
+VIDEO_FPS = 60
 
 SCENES = [
     (0, 4, "片头"),
@@ -97,19 +87,96 @@ def summarize(data: dict) -> dict:
     }
 
 
-def render(output: Path, ffmpeg: str | None = None, node: str | None = None) -> None:
-    """本地Chrome逐帧渲染、WebCodecs编码，再封装通用H.264/AAC MP4。"""
+def video_timing(source_end: float = SOURCE_END) -> dict:
+    """倒推裁切点；图表40秒后清空，保留视频自身的入门白场。"""
+    duration = GRAPHICS_DURATION + WHITE_TAIL_DURATION
+    if not math.isfinite(source_end) or source_end < duration:
+        raise ValueError("白场结束时间必须有限，且不能早于开场总时长。")
+    return {
+        "duration": duration,
+        "graphicsDuration": GRAPHICS_DURATION,
+        "fadeStart": GRAPHICS_DURATION - 0.4,
+        "whiteAt": duration - 0.2,
+        "sourceStart": round(source_end - duration, 6),
+        "sourceEnd": source_end,
+        "fps": VIDEO_FPS,
+    }
+
+
+def ffmpeg_executable(ffmpeg: str | None = None) -> str:
     if ffmpeg is None:
         import imageio_ffmpeg
 
         ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    return ffmpeg
+
+
+def prepare_video(source: Path, target: Path, timing: dict, ffmpeg: str) -> None:
+    """精确裁切指定视频及同段原声，不添加背景动画或原创配乐。"""
+    temporary = target.with_name("background.partial.mp4")
+    subprocess.run(
+        [
+            ffmpeg,
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-ss",
+            str(timing["sourceStart"]),
+            "-i",
+            str(source),
+            "-t",
+            str(timing["duration"]),
+            "-map",
+            "0:v:0",
+            "-map",
+            "0:a:0",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "fast",
+            "-crf",
+            "17",
+            "-r",
+            str(timing["fps"]),
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "320k",
+            "-ar",
+            "48000",
+            "-af",
+            f"afade=t=in:st=0:d=0.03,afade=t=out:st={timing['whiteAt']}:d=0.2",
+            "-map_metadata",
+            "-1",
+            "-movflags",
+            "+faststart",
+            str(temporary),
+        ],
+        check=True,
+    )
+    temporary.replace(target)
+
+
+def render(
+    output: Path, ffmpeg: str | None = None, node: str | None = None, work: Path | None = None
+) -> None:
+    """Chrome导出透明图表，由FFmpeg叠加60fps背景并保留原声。"""
+    ffmpeg = ffmpeg_executable(ffmpeg)
     node = node or shutil.which("node")
     if node is None:
         raise FileNotFoundError("需要Node.js及本地playwright包。")
-    subprocess.run(
-        [node, str(Path(__file__).with_name("viz") / "render_opener.cjs"), str(output), ffmpeg],
-        check=True,
-    )
+    arguments = [
+        node,
+        str(Path(__file__).with_name("viz") / "render_opener.cjs"),
+        str(output),
+        ffmpeg,
+    ]
+    if work is not None:
+        arguments += ["--work", str(work)]
+    subprocess.run(arguments, check=True)
 
 
 def build(
@@ -121,8 +188,9 @@ def build(
     replace=False,
     ffmpeg=None,
     node=None,
+    source_end=SOURCE_END,
 ) -> Path:
-    """生成独立MP4、动画母版、配乐、离线答辩入口及来源清单。"""
+    """交付单份压缩MP4及播放入口，构建中间文件只写项目缓存。"""
     analysis, output, background = (
         analysis.resolve(strict=True),
         output.resolve(),
@@ -132,6 +200,8 @@ def build(
         raise ValueError("分析输入与输出必须位于本项目内部。")
     if output.exists() and not (replace and (output / "build_manifest.json").is_file()):
         raise FileExistsError("输出已存在；只允许显式更新已有开场片目录。")
+    timing = video_timing(source_end)
+    ffmpeg = ffmpeg_executable(ffmpeg)
     data, audit, manifest = load_release(analysis)
     metrics = summarize(data)
     template = Path(__file__).with_name("viz") / "opener.html"
@@ -140,68 +210,81 @@ def build(
     for key, value in {
         "DATA": json.dumps(metrics, ensure_ascii=False).replace("</", "<\\/"),
         "SCENES": json.dumps(SCENES, ensure_ascii=False),
-        "BACKGROUND": base64.b64encode(background.read_bytes()).decode("ascii"),
+        "TIMING": json.dumps(timing),
         "FOOTER": footer,
     }.items():
         html = html.replace(f"__{key}__", value)
     output.mkdir(parents=True, exist_ok=replace)
-    assets = output / "assets"
-    assets.mkdir(exist_ok=replace)
-    if background != (assets / "cosmic-background.png").resolve():
-        shutil.copy2(background, assets / "cosmic-background.png")
+    cache = (config.PROJECT_ROOT / ".pytest_cache").resolve()
+    if not cache.is_relative_to(config.PROJECT_ROOT.resolve()):
+        raise ValueError("构建缓存必须位于本项目内部。")
+    cache.mkdir(exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix="opener-build-", dir=cache)).resolve()
+    assets = work / "assets"
+    assets.mkdir()
+    prepare_video(background, assets / "background.mp4", timing, ffmpeg)
     player = (template.parent / "opener_player.html").read_text(encoding="utf-8")
     font, notice = embed_font(html + player, assets / "noto-sans-sc-subset.woff")
     html = html.replace("__FONT__", font).replace(
         "__FONT_LICENSE__", notice.replace("</script", "<\\/script")
     )
-    (output / "motion.html").write_text(html, encoding="utf-8")
+    (work / "motion.html").write_text(html, encoding="utf-8")
+    (output / "assets").mkdir(exist_ok=True)
+    shutil.copyfile(assets / "FONT_LICENSE.txt", output / "assets/FONT_LICENSE.txt")
     (output / "index.html").write_text(
-        player.replace("__FONT__", font),
+        player.replace("__FONT__", font).replace("__TIMING__", json.dumps(timing)),
         encoding="utf-8",
     )
-    synthesize(output / "原创配乐.wav")
     storyboard = [
         "# 答辩开场视频",
         "",
-        "40秒，1920×1080，30fps。原创合成配乐，无旁白。画面仅使用已发布ADS。",
+        "图表展示40秒，接1.2秒视频自身的入门白场，总长41.2秒，1920×1080，60fps。",
+        "背景和声音均来自用户提供的视频；图表仅使用已发布ADS。未叠加旧星空、缩放、光晕或背景漂移动效。",
         "",
         "| 时间 | 内容 |",
         "| --- | --- |",
     ]
     storyboard += [f"| {start:02}–{end:02}秒 | {title} |" for start, end, title in SCENES]
+    storyboard += ["| 40–41.2秒 | 仅保留视频自然入门白场，所有图表、文字、遮罩和按钮均隐藏 |"]
     storyboard += [
         "",
         "从index.html开始播放，片尾自动进入相邻defense_20261019_final目录的32页答辩。可跳过片头。MP4可单独播放或插入其他PPT。",
         "",
         "规模、卡池、月度峰值、账号中位数、名称榜均与答辩采用同次受保护聚合。名称按原始字符串精确汇总，未合并翻译别名；账号记录量不等于付费；留存记录无法推断官方概率或保底。",
         "",
-        "背景为imagegen内置工具生成的装饰星空，不表示账号或统计点；字体为SIL OFL许可Noto Sans SC，许可附在assets。配乐由本项目score.py原创合成，无外部音频采样。",
+        f"背景从原视频{timing['sourceStart']:.3f}秒裁到{timing['sourceEnd']:.3f}秒，原速播放。",
+        "图表前景39.6–40秒淡出；40秒起透明清空，背景不再有暗化遮罩。41秒起已全白，41.2秒时无黑帧接入预加载的答辩。",
+        "使用同段视频原声，仅在首尾做极短音量淡入淡出以避免切口爆音，没有混入原开场配乐。",
+        "字体为SIL OFL许可Noto Sans SC，许可附在assets。",
         "",
-        "背景保存于assets/cosmic-background.png，使用imagegen内置工具生成。最终生成提示词如下：",
-        "",
-        BACKGROUND_PROMPT,
+        "交付目录仅保留成片、播放入口、海报、使用说明、构建清单和字体许可。",
+        "成片采用H.264 CRF 23 / slow、AAC 160k，保留1080p与60fps。",
+        "背景视频、透明前景母版和字体子集只用于构建，位于项目缓存，完成构建后自动删除。",
     ]
     (output / "使用说明.md").write_text("\n".join(storyboard), encoding="utf-8")
     metadata = {
-        "video_version": "1.0.0",
-        "duration_seconds": 40,
+        "video_version": "2.1.0",
+        "duration_seconds": timing["duration"],
+        "graphics_duration_seconds": GRAPHICS_DURATION,
         "width": 1920,
         "height": 1080,
-        "fps": 30,
+        "fps": VIDEO_FPS,
+        "encoding": {"video": "H.264", "preset": "slow", "crf": 23, "audio": "AAC 160k"},
+        "timing": timing,
         "scenes": SCENES,
         "dataset": data["dataset"],
         "source_config": manifest["config_hash"],
         "source_ads_sha256": hashlib.sha256((analysis / "ads.json").read_bytes()).hexdigest(),
-        "background_sha256": hashlib.sha256(background.read_bytes()).hexdigest(),
-        "background_generation": "imagegen built-in tool",
-        "background_prompt": BACKGROUND_PROMPT,
-        "music": "Original local synthesis; no voice or external samples",
+        "source_video": background.name,
+        "source_video_sha256": hashlib.sha256(background.read_bytes()).hexdigest(),
+        "background_sha256": hashlib.sha256((assets / "background.mp4").read_bytes()).hexdigest(),
+        "background_motion": "User-provided video at original speed; no added background animation",
+        "music": "Original audio from the same source-video interval; short edge fades only",
         "metrics": metrics,
         "code_sha256": {
             path.name: hashlib.sha256(path.read_bytes()).hexdigest()
             for path in [
                 Path(__file__),
-                Path(__file__).with_name("score.py"),
                 template,
                 template.parent / "render_opener.cjs",
                 template.parent / "opener_player.html",
@@ -211,21 +294,41 @@ def build(
     (output / "build_manifest.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    if not prepare_only:
-        render(output, ffmpeg, node)
+    if prepare_only:
+        return work / "motion.html"
+    try:
+        render(output, ffmpeg, node, work)
+        metadata["output_video_sha256"] = hashlib.sha256(
+            (output / "开场视频.mp4").read_bytes()
+        ).hexdigest()
+        metadata["output_video_bytes"] = (output / "开场视频.mp4").stat().st_size
+        (output / "build_manifest.json").write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    finally:
+        if work.parent != cache or not work.is_relative_to(config.PROJECT_ROOT.resolve()):
+            raise ValueError("拒绝清理项目缓存以外的路径。")
+        shutil.rmtree(work)
     return output / "index.html"
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="从发布ADS制作40秒答辩开场视频，不读取数据库。")
+    parser = argparse.ArgumentParser(
+        prog="genshin-insight opener", description="40秒ADS图表叠加原声视频，入门全白后进入答辩。"
+    )
     parser.add_argument(
         "--analysis", type=Path, default=config.IMAGE_DIR / "analysis_20261019_final"
     )
     parser.add_argument(
         "--output", type=Path, default=config.PRESENTATION_DIR / "opener_20261019_final"
     )
-    parser.add_argument("--background", type=Path, required=True)
-    parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument(
+        "--background-video", "--background", dest="background", type=Path, required=True
+    )
+    parser.add_argument("--source-end", type=float, default=SOURCE_END, help="源视频的白场结束秒数")
+    parser.add_argument(
+        "--prepare-only", action="store_true", help="仅在项目缓存生成可定位的动画母版"
+    )
     parser.add_argument("--replace", action="store_true")
     parser.add_argument("--ffmpeg")
     parser.add_argument("--node")
@@ -239,6 +342,7 @@ def main(argv: list[str] | None = None) -> int:
             replace=args.replace,
             ffmpeg=args.ffmpeg,
             node=args.node,
+            source_end=args.source_end,
         )
     )
     return 0
