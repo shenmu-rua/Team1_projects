@@ -1,0 +1,120 @@
+{
+  "清洗输入": {
+    "value": 15807577,
+    "basis_or_formula": "清洗稽核.json:metrics.input_pulls",
+    "code": "quality.audit_cleaning"
+  },
+  "清洗保留": {
+    "value": 15807066,
+    "basis_or_formula": "清洗稽核.json:metrics.kept_pulls",
+    "code": "quality.audit_cleaning"
+  },
+  "移除重复": {
+    "value": 511,
+    "basis_or_formula": "清洗稽核.json:metrics.duplicate_rows_removed",
+    "code": "quality.audit_cleaning"
+  },
+  "重复占比百分数": {
+    "value": 0.003232626986412908,
+    "basis_or_formula": "duplicate_rows_removed/input_pulls*100",
+    "code": "报告正文计算"
+  },
+  "主分析范围": {
+    "value": {
+      "dataset_id": 3,
+      "pulls": 15598804,
+      "people": 16289,
+      "first_time": "2020-12-03 23:35:23",
+      "last_time": "2022-07-26 20:57:25",
+      "suppressed": false
+    },
+    "basis_or_formula": "ads.json:scope",
+    "code": "ads.collect"
+  },
+  "A01角色池构成百分数": {
+    "value": 66.10025358354396,
+    "basis_or_formula": "pools[301].pulls/scope.pulls*100",
+    "code": "ads.collect"
+  },
+  "A01角色池五星占比百分数": {
+    "value": 1.6298851821028513,
+    "basis_or_formula": "pools[301].star5/pools[301].pulls*100",
+    "code": "ads.collect"
+  },
+  "A02单池月峰值": {
+    "value": {
+      "month": "2022-01",
+      "pool_group": 301,
+      "pulls": 1813296,
+      "people": 7471,
+      "suppressed": false
+    },
+    "basis_or_formula": "max(months中可发布的pulls)",
+    "code": "ads.collect"
+  },
+  "A03星期小时峰值": {
+    "value": {
+      "weekday": 1,
+      "hour": 18,
+      "pulls": 1893835,
+      "people": 13561,
+      "suppressed": false
+    },
+    "basis_or_formula": "max(clock中可发布的pulls)",
+    "code": "ads.collect"
+  },
+  "A04账号记录量中位数": {
+    "value": 744,
+    "basis_or_formula": "volume_median",
+    "code": "ads.collect"
+  },
+  "A05角色池最高记录量组": {
+    "value": {
+      "pool_group": 301,
+      "quartile": 4,
+      "groups": 4,
+      "people": 4069,
+      "q25": 1.5063731170336037,
+      "median": 1.607717041800643,
+      "q75": 1.7241379310344827
+    },
+    "basis_or_formula": "rates:pool_group=301,quartile最大",
+    "code": "ads.collect"
+  },
+  "A06角色池闭合间隔数": {
+    "value": 151941,
+    "basis_or_formula": "sum(gap_bins[301].counts[301])",
+    "code": "ads.collect"
+  },
+  "A06角色池71至80抽占比百分数": {
+    "value": 54.69623077378719,
+    "basis_or_formula": "71至80箱计数/全部闭合间隔数*100",
+    "code": "ads.collect"
+  },
+  "A07名称榜覆盖百分数": {
+    "value": 54.95266152602451,
+    "basis_or_formula": "sum(items.pulls)/sum(pools.star5)*100",
+    "code": "ads.collect"
+  },
+  "全部质量标记": {
+    "value": {
+      "input_pulls": 15807577,
+      "kept_pulls": 15807066,
+      "rejected_pulls": 511,
+      "duplicate_rows_removed": 511,
+      "conflicting_rows_quarantined": 0,
+      "players_in_cleaned_pulls": 16464,
+      "timestamp_normalized_pulls": 0,
+      "sequence_changed_pulls": 508,
+      "item_type_review_pulls": 10484,
+      "item_type_review_sources": 7,
+      "ambiguous_same_second_pulls": 167128,
+      "preexisting_import_rejected_rows": 0,
+      "rejection_reasons": {
+        "duplicate_gacha_id": 511
+      }
+    },
+    "basis_or_formula": "清洗稽核.json:metrics",
+    "code": "quality.audit_cleaning"
+  }
+}

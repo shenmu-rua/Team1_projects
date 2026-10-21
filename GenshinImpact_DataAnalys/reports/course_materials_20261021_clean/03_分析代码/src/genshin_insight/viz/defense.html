@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="原神抽卡记录清洗与可视化分析：项目流程、实现方法、蓝粉主题与七张分析图的答辩演示">
+<title>原神抽卡记录清洗与可视化分析 · 项目答辩</title>
+<style>
+@font-face{font-family:"Noto Sans SC";src:url(data:font/woff;base64,__FONT__) format("woff");font-weight:100 900;font-display:block}
+:root{__PALETTE__;--scale:1}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","Source Han Sans SC","DejaVu Sans",sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.viewport{position:fixed;inset:0 0 64px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.stage{width:1600px;height:900px;flex:none;position:relative;transform:scale(var(--scale));transform-origin:center center}
+.slide{position:absolute;inset:0;display:none;background:var(--bg);padding:76px 120px 66px;overflow:hidden}
+.slide.active{display:block}
+.slide::before{content:"";position:absolute;left:120px;top:31px;width:38px;height:5.5px;background:var(--pink)}
+.slide h1{font-size:48px;line-height:1.3;letter-spacing:-.7px;font-weight:700;margin:0 0 26px;max-width:1300px}
+.slide .lead{font-size:26px;line-height:1.65;color:var(--muted);margin:0 0 35px;max-width:1250px}
+.slide-content{font-size:27px;line-height:1.65;max-height:655px}
+.slide h2{font-size:30px;line-height:1.4;margin:0 0 22px;font-weight:600}
+.slide h3{font-size:27px;margin:0 0 13px;font-weight:600}
+.slide p{margin:0 0 22px}
+.slide strong{font-weight:700}
+.slide footer{position:absolute;left:120px;right:120px;bottom:25px;display:flex;justify-content:space-between;gap:30px;font-size:17px;color:var(--faint);line-height:1.5}
+.slide footer span:last-child{white-space:nowrap}
+.cover{padding-top:180px}
+.cover h1{font-size:72px;line-height:1.35;max-width:1160px;margin:0 0 30px}
+.cover .lead{font-size:31px;line-height:1.75;margin-bottom:80px}
+.cover .cover-note{font-size:24px;color:var(--muted);max-width:1100px;border-top:1px solid var(--axis);padding-top:26px;line-height:1.8}
+.cover .cover-date{font-size:22px;color:var(--faint);margin-top:24px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:68px}
+.columns.wide-left{grid-template-columns:1.25fr 1fr}
+.rows{display:flex;flex-direction:column;gap:24px}
+.row{display:grid;grid-template-columns:155px 1fr;gap:28px;padding:16px 0;border-bottom:1px solid var(--axis)}
+.row:last-child{border-bottom:0}
+.row .label{font-size:25px;font-weight:600;color:var(--blue)}
+.row p{font-size:26px;margin:0;line-height:1.65}
+.big{font-size:94px;line-height:1.12;font-weight:700;letter-spacing:-3px;color:var(--pink);margin:5px 0 22px}
+.big small{font-size:37px;letter-spacing:0;margin-left:10px;font-weight:500}
+.big-label{font-size:29px;line-height:1.55;margin-bottom:32px;color:var(--ink-soft)}
+.takeaway{border-left:5px solid var(--pink);padding:4px 0 4px 24px;font-size:29px;line-height:1.65;margin:22px 0 0}
+.muted{color:var(--muted)}
+.small{font-size:22px;line-height:1.65}
+.compact{font-size:24px}
+.mono,code,pre{font-family:"DejaVu Sans Mono","DejaVu Sans",monospace}
+code{font-size:.86em;color:var(--navy);overflow-wrap:anywhere}
+pre{font-size:24px;line-height:1.8;white-space:pre-wrap;word-break:normal;border-left:3px solid var(--blue);padding:18px 0 18px 30px;margin:10px 0 28px;color:var(--navy)}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:24px;line-height:1.65}
+th{text-align:left;font-size:23px;font-weight:600;color:var(--blue);border-bottom:2px solid var(--axis);padding:13px 14px 16px}
+td{vertical-align:top;padding:19px 14px;border-bottom:1px solid var(--axis);overflow-wrap:anywhere}
+td:first-child,th:first-child{padding-left:0}
+td:last-child,th:last-child{padding-right:0}
+tr:last-child td{border-bottom:0}
+.numeric{text-align:right;font-variant-numeric:tabular-nums}
+.equation{font-size:49px;line-height:1.55;color:var(--navy);margin:10px 0 40px;white-space:nowrap}
+.equation em{color:var(--pink);font-style:normal;font-weight:700}
+.formula{font-size:33px;line-height:1.7;color:var(--navy);padding:20px 0;margin:0 0 24px;border-bottom:1px solid var(--axis)}
+.palette{display:grid;grid-template-columns:1fr 1fr;column-gap:70px;row-gap:28px;margin:8px 0 33px}
+.swatch{display:grid;grid-template-columns:70px 1fr;gap:23px;align-items:center;padding-bottom:19px;border-bottom:1px solid var(--axis)}
+.color-chip{width:70px;height:70px;background:var(--swatch);border:1px solid var(--axis)}
+.swatch strong{display:block;font-size:27px}
+.swatch span{display:block;font-size:21px;color:var(--muted);margin-top:4px}
+.milestones{display:grid;grid-template-columns:1fr 1fr;gap:36px 65px}
+.milestone{display:grid;grid-template-columns:46px 1fr;gap:20px;border-top:1px solid var(--axis);padding-top:23px}
+.step{color:var(--pink);font-size:31px;font-weight:700}
+.milestone p{font-size:24px;margin:0;color:var(--muted)}
+.milestone h2{font-size:29px;margin-bottom:12px}
+.chart-slide{padding:0}
+.chart-slide::before{display:none}
+.chart-slide svg{width:1600px;height:900px;display:block}
+.chart-slide .chart-page{position:absolute;right:120px;bottom:23px;font-size:17px;color:var(--faint);background:var(--bg);padding-left:15px}
+.chart-slide footer{display:none}
+.closing::before,.closing footer{display:none}
+.closing h1{position:absolute;inset:0;max-width:none;margin:0;display:grid;place-items:center;font-size:112px;letter-spacing:12px;line-height:1;color:var(--navy)}
+.toolbar{position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--bg);border-top:1px solid var(--axis);display:flex;align-items:center;justify-content:center;gap:20px;padding:0 25px;z-index:50;font-size:14px;color:var(--muted)}
+.toolbar button{border:0;background:transparent;padding:8px 10px;border-radius:3px;font-size:14px}
+.toolbar button:hover{background:var(--panel);color:var(--ink)}
+.toolbar .counter{font-variant-numeric:tabular-nums;min-width:62px;text-align:center;color:var(--ink)}
+.toolbar .divider{height:18px;width:1px;background:var(--axis)}
+.toolbar .keys{font-size:12px;margin-left:5px;color:var(--faint)}
+.progress{height:3px;position:absolute;top:-1px;left:0;background:var(--pink);transition:width .2s ease;width:0}
+.chrome-hidden .toolbar{display:none}
+.chrome-hidden .viewport{bottom:0}
+dialog{border:1px solid var(--axis);background:var(--bg);color:var(--ink);padding:32px 38px;max-height:88vh;box-shadow:0 12px 60px #30496c25;font-size:18px;line-height:1.8;overflow:auto}
+dialog::backdrop{background:#1a223366}
+dialog h2{margin:0 0 16px;font-size:26px}
+dialog .close{position:sticky;float:right;top:0;border:0;background:var(--bg);color:var(--muted);padding:2px 10px;font-size:24px}
+#notes{width:min(900px,94vw)}
+#notes-body p{margin:0 0 18px;white-space:pre-line}
+#notes-body .notes-source{font-size:14px;color:var(--muted);border-top:1px solid var(--axis);padding-top:16px;word-break:break-all}
+#contents{width:min(1100px,96vw)}
+.toc-list{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin:0;padding:0;list-style:none}
+.toc-list button{width:100%;display:flex;text-align:left;gap:15px;align-items:baseline;border:0;border-bottom:1px solid var(--axis);background:transparent;padding:12px 5px;font-size:15px;line-height:1.7}
+.toc-list button:hover{background:var(--panel)}
+.toc-list .toc-number{font-size:14px;color:var(--pink);min-width:24px}
+.toc-list .current{font-weight:700;color:var(--pink)}
+.dialog-hint{font-size:14px;color:var(--muted);margin:4px 0 17px}
+@media(max-width:720px){.toolbar{gap:5px;padding:0 4px}.toolbar .keys,.toolbar #fullscreen,.toolbar #print{display:none}.toolbar .counter{min-width:42px}.toolbar button{font-size:12px;padding:8px 6px}.toolbar .divider{display:none}.toc-list{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.progress{transition:none}}
+@page{size:16in 9in;margin:0}
+@media print{
+html,body{width:16in;height:auto;overflow:visible;background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.viewport{position:static;display:block;width:16in;height:auto;overflow:visible}
+.stage{width:1600px;height:auto;position:static;transform:none;zoom:.96}
+.slide,.slide.active{position:relative;display:block;width:1600px;height:900px;break-after:page;page-break-after:always}
+.slide:last-child{break-after:auto;page-break-after:auto}
+.toolbar,dialog{display:none!important}
+}
+</style>
+</head>
+<body class="chrome-hidden">
+<main class="viewport" aria-label="项目答辩演示">
+<div class="stage" id="stage">__SLIDES__</div>
+</main>
+<nav class="toolbar" aria-label="演示控制">
+<div class="progress" id="progress"></div>
+<button type="button" id="previous" aria-label="上一页">← 上一页</button>
+<span class="counter" id="counter" aria-live="polite"></span>
+<button type="button" id="next" aria-label="下一页">下一页 →</button>
+<span class="divider"></span>
+<button type="button" id="toc-button">目录 O</button>
+<button type="button" id="notes-button">讲稿 N</button>
+<button type="button" id="fullscreen">全屏 F</button>
+<button type="button" id="print">打印 / PDF</button>
+<span class="keys">方向键翻页 · H 显示 / 隐藏导航栏</span>
+</nav>
+<dialog id="contents" aria-labelledby="contents-title">
+<button type="button" class="close" aria-label="关闭目录">×</button>
+<h2 id="contents-title">演示目录</h2>
+<p class="dialog-hint">点击标题跳转；按 Esc 返回演示</p>
+<ol class="toc-list">__TOC__</ol>
+</dialog>
+<dialog id="notes" aria-labelledby="notes-title">
+<button type="button" class="close" aria-label="关闭讲稿">×</button>
+<h2 id="notes-title"></h2><div id="notes-body"></div>
+</dialog>
+__NOTES__
+<script type="text/plain" id="font-license">__FONT_LICENSE__</script>
+<script>
+"use strict";
+(()=>{
+ const slides=[...document.querySelectorAll('.slide')];
+ const notes=document.getElementById('notes'), contents=document.getElementById('contents');
+ const total=slides.length;
+ let current=0,touchX=null;
+ function fit(){const height=innerHeight-(document.body.classList.contains('chrome-hidden')?0:64);document.documentElement.style.setProperty('--scale',Math.min(innerWidth/1600,height/900));}
+ function show(index,updateHash=true){
+  current=Math.max(0,Math.min(total-1,index));
+  slides.forEach((slide,i)=>{const active=i===current;slide.classList.toggle('active',active);slide.setAttribute('aria-hidden',String(!active));slide.inert=!active;});
+  document.getElementById('counter').textContent=`${current+1} / ${total}`;
+  document.getElementById('previous').disabled=current===0;
+  document.getElementById('next').disabled=current===total-1;
+  document.getElementById('progress').style.width=`${100*(current+1)/total}%`;
+  document.querySelectorAll('[data-go]').forEach(button=>button.classList.toggle('current',Number(button.dataset.go)===current));
+  document.title=`${current+1}/${total} · ${slides[current].dataset.title} · 原神项目答辩`;
+  if(updateHash)history.replaceState(null,'',`#slide-${current+1}`);
+  if(notes.open)loadNotes();
+ }
+ function loadNotes(){document.getElementById('notes-title').textContent=`${current+1}. ${slides[current].dataset.title}`;document.getElementById('notes-body').replaceChildren(document.getElementById(`note-${current+1}`).content.cloneNode(true));}
+ function openNotes(){loadNotes();notes.showModal();}
+ function toggleFullscreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});else document.exitFullscreen?.();}
+ function fromHash(){const match=location.hash.match(/^#slide-(\d+)$/);show(match?Number(match[1])-1:0,false);}
+ document.getElementById('previous').addEventListener('click',()=>show(current-1));
+ document.getElementById('next').addEventListener('click',()=>show(current+1));
+ document.getElementById('notes-button').addEventListener('click',openNotes);
+ document.getElementById('toc-button').addEventListener('click',()=>contents.showModal());
+ document.getElementById('fullscreen').addEventListener('click',toggleFullscreen);
+ document.getElementById('print').addEventListener('click',()=>window.print());
+ document.querySelectorAll('dialog .close').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
+ document.querySelectorAll('[data-go]').forEach(button=>button.addEventListener('click',()=>{show(Number(button.dataset.go));contents.close();}));
+ addEventListener('keydown',event=>{
+  if(event.ctrlKey||event.altKey||event.metaKey||event.target.matches('input,textarea'))return;
+  if(notes.open||contents.open)return;
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(event.key)){event.preventDefault();show(current+1);}
+  else if(['ArrowLeft','ArrowUp','PageUp'].includes(event.key)){event.preventDefault();show(current-1);}
+  else if(event.key==='Home'){event.preventDefault();show(0);}
+  else if(event.key==='End'){event.preventDefault();show(total-1);}
+  else if(event.key.toLowerCase()==='n')openNotes();
+  else if(event.key.toLowerCase()==='o')contents.showModal();
+  else if(event.key.toLowerCase()==='f')toggleFullscreen();
+  else if(event.key.toLowerCase()==='h'){document.body.classList.toggle('chrome-hidden');fit();}
+ });
+ document.getElementById('stage').addEventListener('touchstart',event=>{touchX=event.changedTouches[0].screenX;},{passive:true});
+ document.getElementById('stage').addEventListener('touchend',event=>{if(touchX===null)return;const dx=event.changedTouches[0].screenX-touchX;if(Math.abs(dx)>60)show(current+(dx<0?1:-1));touchX=null;},{passive:true});
+ addEventListener('resize',fit);addEventListener('hashchange',fromHash);addEventListener('fullscreenchange',fit);
+ fromHash();fit();document.fonts.ready.then(()=>{document.documentElement.dataset.fontReady='true';fit();});
+})();
+</script>
+<noscript>请启用浏览器JavaScript以使用翻页、目录和讲稿；打印时可查看全部幻灯片。</noscript>
+</body>
+</html>

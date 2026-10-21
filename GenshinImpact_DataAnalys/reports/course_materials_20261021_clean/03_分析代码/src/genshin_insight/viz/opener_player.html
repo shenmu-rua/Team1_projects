@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>原神数据分析 · 答辩入口</title>
+<style>
+@font-face{font-family:Opener;src:url(data:font/woff;base64,__FONT__) format('woff');font-weight:100 900}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:#030611;color:#f7f5ef;font-family:Opener,sans-serif;overflow:hidden}
+#screen{height:100%;width:100%;position:relative;background:#030611}video{width:100%;height:100%;object-fit:contain}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#f6f8fc;opacity:0;pointer-events:none}
+#cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#030611a8}
+h1{font-size:clamp(28px,4vw,64px);font-weight:700;margin:0}p{font-size:clamp(14px,1.7vw,22px);color:#b0bbce;margin:0}
+button{font:inherit;cursor:pointer}#start{background:#e6c68c;color:#101523;border:0;padding:15px 38px;font-size:22px;margin-top:18px}#skip{position:absolute;right:28px;top:24px;background:#070e20b8;color:#f7f5ef;border:1px solid #5d708d;padding:9px 16px;font-size:16px}
+#handoff{position:absolute;inset:0;background:#fdfdfd;opacity:0;pointer-events:none;z-index:5}
+body.playing #cover,body.foreground-hidden #skip{display:none}
+body.white-tail #screen,body.in-deck #screen{background:#fdfdfd}
+body.white-tail #handoff,body.in-deck #handoff{opacity:1}
+body.in-deck iframe{opacity:1;pointer-events:auto}body.in-deck video,body.in-deck #cover,body.in-deck #skip{display:none}
+body.reveal-deck #handoff{opacity:0;transition:opacity .32s linear}
+@media(prefers-reduced-motion:reduce){body.reveal-deck #handoff{transition:none}}
+</style>
+<div id="screen">
+<video id="video" src="开场视频.mp4" poster="poster.jpg" preload="auto" playsinline></video>
+<iframe id="deck" src="../defense_20261019_final/index.html#slide-1" title="32页完整答辩" tabindex="-1" aria-hidden="true" inert allowfullscreen></iframe>
+<div id="cover"><h1>原神抽卡记录清洗与可视化分析</h1><p>40秒图表展示，入门全白后进入完整答辩</p><button id="start">播放开场</button><p id="error" role="status"></p></div>
+<button id="skip">跳过片头，进入答辩</button>
+<div id="handoff" aria-hidden="true"></div>
+</div>
+<script>
+const TIMING=__TIMING__,video=document.getElementById('video'),deck=document.getElementById('deck');
+const deckReady=new Promise(resolve=>deck.addEventListener('load',resolve,{once:true}));
+let entering=false;
+function syncHandoff(time){
+  if(entering)return;
+  document.body.classList.toggle('foreground-hidden',time>=TIMING.graphicsDuration);
+  document.body.classList.toggle('white-tail',time>=TIMING.whiteAt);
+}
+async function enterDefense(){
+  if(entering)return;entering=true;video.pause();
+  document.body.classList.add('foreground-hidden','white-tail');
+  await deckReady;
+  deck.inert=false;deck.removeAttribute('aria-hidden');deck.removeAttribute('tabindex');
+  document.body.classList.add('in-deck');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{document.body.classList.add('reveal-deck');deck.focus();}));
+}
+async function startPlayback(){
+  try{await video.play();document.body.classList.add('playing');try{await document.documentElement.requestFullscreen();}catch{}}
+  catch{document.getElementById('error').textContent='请将开场视频与此页面放在同一目录，或使用右上角按钮进入答辩。';}
+}
+document.getElementById('start').onclick=startPlayback;
+video.onended=enterDefense;document.getElementById('skip').onclick=enterDefense;
+video.onclick=()=>video.paused?startPlayback():video.pause();
+video.addEventListener('timeupdate',()=>syncHandoff(video.currentTime));
+if(video.requestVideoFrameCallback){const observe=(_,metadata)=>{syncHandoff(metadata.mediaTime);if(!entering)video.requestVideoFrameCallback(observe);};video.requestVideoFrameCallback(observe);}
+document.addEventListener('keydown',event=>{if(!entering&&event.code==='Space'){event.preventDefault();video.paused?startPlayback():video.pause();}});
+window.enterDefense=enterDefense;window.syncHandoff=syncHandoff;window.openerTiming=TIMING;
+</script>
+</html>

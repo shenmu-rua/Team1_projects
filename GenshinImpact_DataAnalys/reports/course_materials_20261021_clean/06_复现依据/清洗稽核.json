@@ -1,0 +1,109 @@
+{
+  "status": "success",
+  "access_mode": "local_cleaning",
+  "started_at": "2026-10-19T09:18:22+08:00",
+  "config_version": "0.2.0",
+  "rule_version": "1.0.0",
+  "source_file_metadata": {
+    "size_bytes": 2015395840,
+    "mtime_ns": 1792112929544681700
+  },
+  "metrics": {
+    "input_pulls": 15807577,
+    "kept_pulls": 15807066,
+    "rejected_pulls": 511,
+    "duplicate_rows_removed": 511,
+    "conflicting_rows_quarantined": 0,
+    "players_in_cleaned_pulls": 16464,
+    "timestamp_normalized_pulls": 0,
+    "sequence_changed_pulls": 508,
+    "item_type_review_pulls": 10484,
+    "item_type_review_sources": 7,
+    "ambiguous_same_second_pulls": 167128,
+    "preexisting_import_rejected_rows": 0,
+    "rejection_reasons": {
+      "duplicate_gacha_id": 511
+    }
+  },
+  "checks": [
+    {
+      "check": "input_row_accounting",
+      "actual": 15807577,
+      "expected": 15807577,
+      "passed": true
+    },
+    {
+      "check": "rejection_reason_accounting",
+      "actual": 511,
+      "expected": 511,
+      "passed": true
+    },
+    {
+      "check": "accepted_rejected_overlap",
+      "actual": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "check": "source_rows_staged",
+      "actual": 15807577,
+      "expected": 15807577,
+      "passed": true
+    },
+    {
+      "check": "sequence_gaps",
+      "actual": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "check": "dws_player_pool_total",
+      "actual": 15807066,
+      "expected": 15807066,
+      "passed": true
+    },
+    {
+      "check": "dws_pool_total",
+      "actual": 15807066,
+      "expected": 15807066,
+      "passed": true
+    },
+    {
+      "check": "dws_daily_total",
+      "actual": 15807066,
+      "expected": 15807066,
+      "passed": true
+    },
+    {
+      "check": "dws_item_total",
+      "actual": 15807066,
+      "expected": 15807066,
+      "passed": true
+    },
+    {
+      "check": "dws_player_pool_rank_accounting",
+      "actual": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "check": "dws_pool_rank_accounting",
+      "actual": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "check": "foreign_key_errors",
+      "actual": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "check": "sqlite_quick_check",
+      "actual": 1,
+      "expected": 1,
+      "passed": true
+    }
+  ],
+  "elapsed_seconds": 562.73
+}
