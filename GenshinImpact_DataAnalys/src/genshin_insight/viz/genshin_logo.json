@@ -1,0 +1,21 @@
+{
+  "asset": "genshin_logo.png",
+  "source_page": "https://ys.mihoyo.com/main/",
+  "source_url": "https://webstatic.mihoyo.com/dora/biz/mihoyo-hk4e-concept-animation/2.0.11/images/logo-gray-v2.aefe4134.png",
+  "retrieved_on": "2026-10-22",
+  "sha256": "d5a1125b162fea7bdff47a640345ce72ab5ba609561a29c1d1bfc971ac5ecfc8",
+  "original_size": [
+    512,
+    512
+  ],
+  "visible_bounds": [
+    85,
+    69,
+    398,
+    457
+  ],
+  "display_aspect_ratio": 1.29,
+  "display_note": "原始PNG保持不变。SVG视窗去除透明边距，显示比例匹配用户参考图，显示颜色与正文墨黑一致。",
+  "rights": "原神标志属于米哈游。本项目仅将官网原始素材用于课程项目的主题标识。",
+  "display_color": "var(--ink)"
+}

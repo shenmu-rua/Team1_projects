@@ -27,8 +27,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offse
 .slide strong{font-weight:700}
 .slide footer{position:absolute;left:120px;right:120px;bottom:25px;display:flex;justify-content:space-between;gap:30px;font-size:17px;color:var(--faint);line-height:1.5}
 .slide footer span:last-child{white-space:nowrap}
-.cover{padding-top:180px}
+.genshin-logo{display:inline-block;width:36px;height:28px;flex:none;overflow:hidden;vertical-align:middle}
+.genshin-logo-image{filter:url(#genshin-ink-filter)}
+.footer-source{display:flex;align-items:center;gap:8px}
+.cover{padding-top:154px}
 .cover h1{font-size:72px;line-height:1.35;max-width:1160px;margin:0 0 30px}
+.cover-title-line{display:flex;align-items:center;gap:18px;min-height:144px;margin-bottom:5px}
+.cover h1 .genshin-logo{width:186px;height:144px}
 .cover .lead{font-size:31px;line-height:1.75;margin-bottom:80px}
 .cover .cover-note{font-size:24px;color:var(--muted);max-width:1100px;border-top:1px solid var(--axis);padding-top:26px;line-height:1.8}
 .cover .cover-date{font-size:22px;color:var(--faint);margin-top:24px}
@@ -69,9 +74,15 @@ tr:last-child td{border-bottom:0}
 .step{color:var(--pink);font-size:31px;font-weight:700}
 .milestone p{font-size:24px;margin:0;color:var(--muted)}
 .milestone h2{font-size:29px;margin-bottom:12px}
+.team table{font-size:28px;line-height:1.7;margin-top:35px}
+.team th{font-size:24px;padding-bottom:24px}
+.team td{padding:32px 14px}
+.team td:first-child{padding-left:0}
+.team .member-name{font-weight:600}
+.team .member-role{font-size:22px;color:var(--muted);margin-left:18px}
 .chart-slide{padding:0}
 .chart-slide::before{display:none}
-.chart-slide svg{width:1600px;height:900px;display:block}
+.chart-slide>svg{width:1600px;height:900px;display:block}
 .chart-slide .chart-page{position:absolute;right:120px;bottom:23px;font-size:17px;color:var(--faint);background:var(--bg);padding-left:15px}
 .chart-slide footer{display:none}
 .closing::before,.closing footer{display:none}
@@ -113,6 +124,7 @@ html,body{width:16in;height:auto;overflow:visible;background:var(--bg);-webkit-p
 </style>
 </head>
 <body class="chrome-hidden">
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><defs><filter id="genshin-ink-filter" color-interpolation-filters="sRGB"><feFlood style="flood-color:var(--ink)" result="ink"/><feComposite in="ink" in2="SourceAlpha" operator="in"/></filter></defs></svg>
 <main class="viewport" aria-label="项目答辩演示">
 <div class="stage" id="stage">__SLIDES__</div>
 </main>

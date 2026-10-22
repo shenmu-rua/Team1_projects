@@ -14,7 +14,8 @@ from xml.etree import ElementTree as ET
 
 from . import config
 from .ads import MIN_PEOPLE, POOL_NAMES
-from .speech import compose, glossary_markdown
+from .speech import DEFENSE_QA, compose, defense_qa_markdown, glossary_markdown
+from .team import MEMBERS, TEAM_SOURCE
 
 
 def without_scope(text: str) -> str:
@@ -79,7 +80,6 @@ def make_slides(data: dict, audit: dict, manifest: dict) -> list[dict]:
         * sum(row["counts"][0] for row in data["volume_bins"] if row["hi"] and row["hi"] <= 1000)
         / scope["people"]
     )
-    top = data["items"][0]
     top_share = (
         100
         * sum(row["pulls"] for row in data["items"])
@@ -118,7 +118,9 @@ def make_slides(data: dict, audit: dict, manifest: dict) -> list[dict]:
 
     add(
         "原神抽卡记录清洗与可视化分析",
-        '<h1>原神抽卡记录<br>清洗与可视化分析</h1><p class="lead">项目汇报与答辩</p>'
+        '<h1 aria-label="原神抽卡记录清洗与可视化分析">'
+        '<span class="cover-title-line">__GENSHIN_LOGO__<span>抽卡记录</span></span>'
+        '<span>清洗与可视化分析</span></h1><p class="lead">项目汇报与答辩</p>'
         '<p class="cover-note">抽卡记录经过哪些处理，图中的数字如何得到，结论能够说明什么？</p>'
         f'<p class="cover-date">{today}</p>',
         "本项目围绕抽卡记录建立一套可复现的清洗、汇总和图表流程。汇报先解释数据如何进入可信的分析层，"
@@ -602,102 +604,25 @@ def make_slides(data: dict, audit: dict, manifest: dict) -> list[dict]:
         f"原始名称按五星记录次数降序排列，主粉强调榜首，其余灰色。前{len(data['items'])}个原始名称覆盖约{top_share:.1f}%的五星记录。"
         "相同原始名称合并，不同语言名称不自动归一；角色与武器都可以进入榜单。次数可以包含同一账号重复抽中，因此不能直接读作独立拥有人数。",
     )
-    add(
-        "名称榜：记录频次与名称口径",
-        '<div class="columns"><div>'
-        f'<div class="big">{top["pulls"]:,}<small>次</small></div>'
-        f'<div class="big-label">{escape(top["name"])} · 当前原始名称榜首<br>前{len(data["items"])}个名称覆盖五星记录的{top_share:.1f}%</div>'
-        '<p class="muted">频次是五星记录次数；同一账号可以贡献多次记录。</p></div><div>'
-        + rows(
-            [
-                ("名称", "只合并精确原始名称，翻译别名保留分离。"),
-                ("筛选", "按已校验星级筛选，不依赖待复核的物品类型编码。"),
-                ("解释", "名称曝光机会和留存历史不同；不能直接据此排名角色人气。"),
-            ]
-        )
-        + "</div></div>",
-        f"榜首{top['name']}{top['pulls']:,}次，这是记录频次，不是独立账号数。"
-        "多语言名称尚未建立可信映射，直接合并可能引入错误，"
-        "所以保留原名。榜单也受不同物品在记录窗口内的曝光机会、账号选择和历史缺失影响。如果要做人气分析，"
-        "需要先统一实体，并定义可比的曝光与选择口径。",
-        "分析结果",
-        "ADS.items；ADS.pools；dim_item.rank_type",
-    )
 
     add(
-        "主要结论与解释边界",
+        "小组分工",
         table(
-            ["已经得到的描述", "解释边界", "进一步研究所需证据"],
+            ["成员", "主要职责"],
             [
                 (
-                    f"角色活动池占留存抽数{role_share:.1f}%",
-                    "是记录构成，不能直接换算市场或消费份额",
-                    "稳定的采样与完整历史",
-                ),
-                (
-                    "月度和星期小时有明显高值",
-                    "不能仅凭时间对应关系解释为版本因果效应",
-                    "确认时区、曝光基数与事件日历",
-                ),
-                (
-                    f"账号留存抽数中位数{data['volume_median']:,.0f}抽",
-                    "不等于完整游戏历史或付费水平",
-                    "账号记录覆盖与投入信息",
-                ),
-                (
-                    "已闭合五星间隔呈集中分布",
-                    "缺失与删失未解决，不作为官方保底推断",
-                    "完整连续历史与明确的观察设计",
-                ),
+                    f'<span class="member-name">{member["name"]}</span>'
+                    f'<span class="member-role">{member["role"]}</span>',
+                    member["responsibility"],
+                )
+                for member in MEMBERS
             ],
-            [35, 37, 28],
+            [24, 76],
         ),
-        "结论和证据边界要一起汇报。当前可以确认样本内的记录构成、时间集中和分布特征。进一步的玩家行为、投入或机制研究，"
-        "需要额外口径与数据支持。项目价值是建立可追溯的处理和表达流程，使后续补充证据时能够沿同一套规则复算，而不是把描述性图形包装成因果结论。",
-        "结论与答辩",
-    )
-
-    add(
-        "答辩常见问题",
-        rows(
-            [
-                (
-                    "为何分面",
-                    "抽数与五星占比量纲不同；独立面板能保留真实刻度，避免双Y轴制造视觉交点。",
-                ),
-                ("如何去重", "先来源位置、再账号内业务ID；相同内容保留一条，内容冲突全部隔离。"),
-                ("能否算保底", "当前只有留存记录；首末段与缺失历史限制了真实间隔的识别。"),
-                (
-                    "如何复现",
-                    "只读源库、独立清洗产物、固定口径与配置哈希；本地import串联处理和出图。",
-                ),
-            ]
-        ),
-        "答辩可按四个问题展开：分面解决不同量纲下的阅读偏差；两层去重保证规则明确；间隔图受到观察历史限制，"
-        "不能给出真实保底结论；复现依靠版本、参数、输入文件元信息与代码哈希。对尚未确认的类型和名称映射，"
-        "保持待复核状态，并说明需要补充什么证据。",
-        "结论与答辩",
-    )
-
-    add(
-        "复现入口与后续完善",
-        '<div class="columns wide-left"><div><h2>在项目目录显式运行</h2>'
-        "<pre>python -m genshin_insight clean\npython -m genshin_insight charts\npython -m genshin_insight defense</pre>"
-        '<p class="small muted">未安装包时先设置PYTHONPATH=src;.；清洗与图集生成新目录，HTML从既有ADS和聚合稽核制作。</p>'
-        "</div><div><h2>后续工作</h2>"
-        + rows(
-            [
-                ("语义", "复核物品类型，建立可追溯的多语言实体映射。"),
-                ("时间", "确认时区、记录覆盖与曝光口径。"),
-                ("分析", "在连续历史与观察机制明确后，再讨论更强的机制推断。"),
-            ]
-        )
-        + "</div></div>",
-        "三个入口对应清洗、制图和汇报。已经有清洗结果和ADS时，可以直接制作汇报，不必再次运行耗时清洗。"
-        "每次图集保留配置、环境与输入元信息，HTML另外记录构建来源。下一步优先处理语义映射和时间覆盖问题，"
-        "这些证据决定后续可以提出多强的分析结论。",
-        "结论与答辩",
-        "README.md；src/genshin_insight/__main__.py；manifest.json",
+        "",
+        "团队分工",
+        TEAM_SOURCE,
+        kind="team",
     )
 
     add(
@@ -759,6 +684,53 @@ def inline_svg(path: Path, prefix: str) -> str:
             element.set(key, value)
     root.set("role", "img")
     root.set("aria-label", path.stem)
+    return ET.tostring(root, encoding="unicode")
+
+
+def logo_svg() -> str:
+    """嵌入官网原图；仅以SVG视窗裁掉透明边距，按用户参考图显示。"""
+    directory = Path(__file__).with_name("viz")
+    metadata = json.loads((directory / "genshin_logo.json").read_text(encoding="utf-8"))
+    original = (directory / metadata["asset"]).read_bytes()
+    if hashlib.sha256(original).hexdigest() != metadata["sha256"]:
+        raise ValueError("原神标志素材与已核对的官网原图不一致。")
+    left, top, right, bottom = metadata["visible_bounds"]
+    width, height = metadata["original_size"]
+    encoded = base64.b64encode(original).decode("ascii")
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" class="genshin-logo" '
+        'role="img" aria-label="原神" '
+        f'viewBox="{left} {top} {right - left} {bottom - top}" '
+        'preserveAspectRatio="none">'
+        f'<image class="genshin-logo-image" width="{width}" height="{height}" '
+        f'href="data:image/png;base64,{encoded}"/></svg>'
+    )
+
+
+def brand_chart(svg: str, logo: str) -> str:
+    """只替换图表来源行的品牌文字，保留统计图与其余来源为原生SVG文字。"""
+    namespace = "{http://www.w3.org/2000/svg}"
+    root = ET.fromstring(svg)
+    for parent in list(root.iter()):
+        for element in list(parent):
+            if element.tag != namespace + "text" or not (element.text or "").startswith(
+                "数据来源：原神"
+            ):
+                continue
+            remainder = element.text.removeprefix("数据来源：原神")
+            x, y = float(element.get("x")), float(element.get("y"))
+            element.text = "数据来源："
+            image = ET.fromstring(logo)
+            image.set("x", str(x + 48))
+            image.set("y", str(y - 14.5))
+            image.set("width", "23")
+            image.set("height", "17.8")
+            image.set("style", "width:23px;height:17.8px")
+            image.set("class", "genshin-logo chart-logo")
+            parent.append(image)
+            following = ET.SubElement(parent, namespace + "text", dict(element.attrib))
+            following.set("x", str(x + 75))
+            following.text = remainder
     return ET.tostring(root, encoding="unicode")
 
 
@@ -861,13 +833,18 @@ def build(
         "genshin-insight charts / defense",
         f"{manifest['settings']['version']}+{manifest['config_hash']} / 清洗{audit['rule_version']}",
     )
+    logo = logo_svg()
+    logo_metadata = json.loads(
+        (Path(__file__).with_name("viz") / "genshin_logo.json").read_text(encoding="utf-8")
+    )
+    slides[0]["source"] += f"；原神艺术字（官网）：{logo_metadata['source_url']}"
     charts = {}
     for filename, plot in PLOTS:
         if not filename.startswith("A"):
             continue
         path = viz.save(vectorize(plot(data, source)), assets / f"{filename}.svg", ppt=True)
-        charts[filename[:3]] = inline_svg(path, filename[:3].lower() + "-")
-    foot = f"原神清洗记录·主分析03；图表 {manifest['settings']['version']}+{manifest['config_hash']}；清洗规则 {audit['rule_version']}"
+        charts[filename[:3]] = brand_chart(inline_svg(path, filename[:3].lower() + "-"), logo)
+    foot = f"清洗记录·主分析03；图表 {manifest['settings']['version']}+{manifest['config_hash']}；清洗规则 {audit['rule_version']}"
     sections, notes, toc, manuscript = (
         [],
         [],
@@ -875,7 +852,7 @@ def build(
         [
             "# 原神抽卡记录清洗与可视化分析 · 完整答辩讲稿",
             "",
-            "按32页PPT顺序编排，逐页正文可直接朗读，段尾包含翻页过渡。依据行用于备查，不必朗读；文末附术语速查，不增加PPT页数。",
+            f"按{len(slides)}页PPT顺序编排，逐页正文可直接朗读，段尾包含翻页过渡。依据行用于备查，不必朗读；文末附术语速查及答辩问答，均不增加PPT页数。",
             "",
         ],
     )
@@ -893,7 +870,8 @@ def build(
             ""
             if slide["kind"] == "closing"
             else (
-                f"<footer><span>{escape(foot)}</span><span>{i:02} / {len(slides)}</span></footer>"
+                '<footer><span class="footer-source">__GENSHIN_LOGO__'
+                f"<span>{escape(foot)}</span></span><span>{i:02} / {len(slides)}</span></footer>"
             )
         )
         sections.append(
@@ -914,7 +892,7 @@ def build(
             f"依据：{slide['source']}",
             "",
         ]
-    manuscript += [glossary_markdown()]
+    manuscript += [glossary_markdown(), defense_qa_markdown()]
     colors = {
         "bg": theme.BG,
         "panel": theme.PANEL,
@@ -937,6 +915,7 @@ def build(
         "SLIDES": "\n".join(sections),
         "TOC": "".join(toc),
         "NOTES": "\n".join(notes),
+        "GENSHIN_LOGO": logo,
     }.items():
         html = html.replace(f"__{key}__", value)
     font_data, notice = embed_font(html, assets / "noto-sans-sc-subset.woff")
@@ -951,8 +930,14 @@ def build(
         "deck_version": config.DECK_VERSION,
         "created_at": now.isoformat(),
         "slides": len(slides),
+        "qa_pairs": len(DEFENSE_QA),
         "charts": list(charts),
         "offline": True,
+        "logo_source": logo_metadata,
+        "team_assignment_source": TEAM_SOURCE,
+        "team_assignment_sha256": hashlib.sha256(
+            Path(__file__).with_name("team.py").read_bytes()
+        ).hexdigest(),
         "source_config": manifest["config_hash"],
         "source_ads_sha256": hashlib.sha256((analysis / "ads.json").read_bytes()).hexdigest(),
         "builder_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),

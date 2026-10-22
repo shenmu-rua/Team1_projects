@@ -44,6 +44,8 @@ async function main(){
     await page.goto(pathToFileURL(path.join(work,'motion.html')).href);await page.waitForFunction(()=>window.filmReady===true);
     for(const time of [2.6,6.8,12.9,20.1,26.4,32.4,38]){
       const result=await page.evaluate(t=>window.seekFilm(t),time);probes.push(result);assert.deepEqual(result.errors,[],`Text outside safe area at ${time}`);
+      assert.equal(result.art.length,time===2.6||time===38?1:0);
+      assert(result.text.every(item=>!item.value.includes('原神')));
       await page.locator('.stage').screenshot({path:path.join(qa,`scene_${result.scene+1}.png`)});
     }
     for(const time of [0,3.98,4,9.98,10,15.98,16,22.98,23,28.98,29,34.98,35,39.966])assert.deepEqual((await page.evaluate(t=>window.renderFrame(t),time)).errors,[]);
@@ -51,7 +53,7 @@ async function main(){
       const result=await page.evaluate(t=>window.seekFilm(t),time);
       assert.deepEqual(result.errors,[]);
       if(time>=40){
-        assert.equal(result.foregroundVisible,false);assert.deepEqual(result.text,[]);
+        assert.equal(result.foregroundVisible,false);assert.deepEqual(result.text,[]);assert.deepEqual(result.art,[]);
         assert(await page.evaluate(()=>{const pixels=document.getElementById('film').getContext('2d').getImageData(0,0,1920,1080).data;for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==0)return false;return true;}));
       }
       await page.locator('.stage').screenshot({path:path.join(qa,`transition_${String(time).replace('.','_')}.png`)});

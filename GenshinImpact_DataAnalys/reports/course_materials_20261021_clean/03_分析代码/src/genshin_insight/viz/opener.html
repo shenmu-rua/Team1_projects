@@ -15,10 +15,19 @@ body:hover #controls,body:focus-within #controls{opacity:1}button{font:inherit;c
 <script id="font-license" type="text/plain">__FONT_LICENSE__</script>
 <script>
 const DATA=__DATA__,SCENES=__SCENES__,TIMING=__TIMING__,FOOTER='__FOOTER__';
+const LOGO=__LOGO__,logoImage=new Image();logoImage.src=LOGO.src;
 const canvas=document.getElementById('film'),ctx=canvas.getContext('2d',{alpha:true}),background=document.getElementById('background');
 const C={white:'#f7f5ef',gold:'#e6c68c',cyan:'#91c9e5',muted:'#b0bbce',axis:'#5d708d',faint:'#8996ad',gray:'#7e8a9e',navy:'#050917'};
 const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>1-(1-clamp(x))**3,fmt=x=>Math.round(x).toLocaleString('en-US');
-const frames={text:[],errors:[]};let lastTime=0,playing=false,raf=0;
+const frames={text:[],art:[],errors:[]};let lastTime=0,playing=false,raf=0;
+
+function wordmark(x,y,width,glow){
+  const [left,top,right,bottom]=LOGO.bounds,height=width/LOGO.aspect;
+  ctx.save();ctx.filter='brightness(0) invert(1)';ctx.shadowColor=C.white;ctx.shadowBlur=glow;
+  ctx.drawImage(logoImage,left,top,right-left,bottom-top,x,y,width,height);ctx.restore();
+  const box={value:'原神艺术字',left:x,top:y,right:x+width,bottom:y+height};frames.art.push(box);
+  if(box.left<110||box.right>1810||box.top<65||box.bottom>1050)frames.errors.push(box);
+}
 
 function text(value,x,y,size=40,color=C.white,options={}){
   ctx.save();ctx.font=`${options.weight||400} ${size}px Opener`;ctx.textAlign=options.align||'left';ctx.textBaseline='alphabetic';ctx.fillStyle=color;
@@ -48,7 +57,7 @@ function hbars(rows,progress,{x=1030,y=400,width=690,rowHeight=110,max=20000,col
 function intro(u){
   ctx.save();const zoom=1.035-.035*ease(u/.8);ctx.translate(960,540);ctx.scale(zoom,zoom);ctx.translate(-960,-540);
   text('GENSHIN DATA ANALYSIS',960,324,25,C.gold,{align:'center',tracking:8});
-  text('原神',960,537,174,C.white,{weight:700,align:'center',glow:25});
+  wordmark(810,342,300,25);
   text('抽卡记录可视化分析',960,650,64,C.white,{weight:500,align:'center'});
   text(`${(DATA.pulls/10000).toFixed(1)}万条留存记录`,960,757,32,C.gold,{align:'center'});ctx.restore();
 }
@@ -103,13 +112,14 @@ function names(u){
 }
 function ending(u){
   text('GENSHIN DATA ANALYSIS',144,330,27,C.gold,{tracking:7});
-  text('原神抽卡记录',144,502,106,C.white,{weight:700,glow:15});
+  wordmark(144,370,210,15);
+  text('抽卡记录',378,502,106,C.white,{weight:700,glow:15});
   text('清洗与可视化分析',144,643,100,C.white,{weight:700});
   text('项目答辩',150,783,40,C.gold);text('以下进入完整汇报',150,847,28,C.muted);
 }
 const sceneDraw=[intro,scale,pools,months,volume,names,ending];
 function renderFrame(t){
-  t=Math.min(TIMING.duration,Math.max(0,t));lastTime=t;frames.text=[];frames.errors=[];
+  t=Math.min(TIMING.duration,Math.max(0,t));lastTime=t;frames.text=[];frames.art=[];frames.errors=[];
   ctx.globalAlpha=1;ctx.clearRect(0,0,1920,1080);
   const i=SCENES.findIndex(([start,end])=>t>=start&&t<end),scene=SCENES[i];
   const visibility=1-clamp((t-TIMING.fadeStart)/(TIMING.graphicsDuration-TIMING.fadeStart));
@@ -121,7 +131,7 @@ function renderFrame(t){
   }
   ctx.globalAlpha=1;
   document.getElementById('seek').value=t;document.getElementById('time').textContent=`${t.toFixed(1)} / ${TIMING.duration.toFixed(1)} 秒`;
-  return {scene:scene?i:7,title:scene?scene[2]:'入门白场',errors:frames.errors,text:frames.text,foregroundVisible:visibility>0};
+  return {scene:scene?i:7,title:scene?scene[2]:'入门白场',errors:frames.errors,text:frames.text,art:frames.art,foregroundVisible:visibility>0};
 }
 window.renderFrame=renderFrame;window.filmData=DATA;window.filmScenes=SCENES;window.filmTiming=TIMING;window.filmReady=false;
 async function seekFilm(t){
@@ -138,6 +148,6 @@ document.getElementById('seek').max=TIMING.duration;
 document.getElementById('seek').oninput=event=>{pause();seekFilm(Number(event.target.value));};
 document.getElementById('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
 const videoReady=background.readyState>=2?Promise.resolve():new Promise((resolve,reject)=>{background.addEventListener('loadeddata',resolve,{once:true});background.addEventListener('error',reject,{once:true});});
-Promise.all([videoReady,document.fonts.load('700 40px Opener'),document.fonts.ready]).then(async()=>{await seekFilm(2.6);window.filmReady=true;}).catch(error=>{document.body.dataset.error=String(error);throw error;});
+Promise.all([videoReady,logoImage.decode(),document.fonts.load('700 40px Opener'),document.fonts.ready]).then(async()=>{await seekFilm(2.6);window.filmReady=true;}).catch(error=>{document.body.dataset.error=String(error);throw error;});
 </script>
 </html>

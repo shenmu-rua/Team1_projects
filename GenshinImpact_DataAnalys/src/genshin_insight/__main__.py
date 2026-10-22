@@ -21,10 +21,11 @@ def main(argv: list[str] | None = None) -> int:
         "charts": "从清洗库生成受保护ADS与蓝粉分析图集",
         "defense": "从发布聚合生成HTML答辩和逐页讲稿",
         "opener": "用指定原声视频制作答辩开场片",
+        "opener-transition": "拼接启动标识并衔接现有答辩首页",
         "report": "按Word模板导出分析报告",
     }
     if arguments and arguments[0] in delegated:
-        return import_module(f".{arguments[0]}", __package__).main(arguments[1:])
+        return import_module(f".{arguments[0].replace('-', '_')}", __package__).main(arguments[1:])
     parser = argparse.ArgumentParser(
         prog="genshin-insight", description="原神项目工具：清洗、图表、答辩、开场片与报告。"
     )

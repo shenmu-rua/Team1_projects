@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import math
@@ -13,7 +14,7 @@ from pathlib import Path
 
 from . import config
 from .ads import MIN_PEOPLE, POOL_NAMES
-from .defense import embed_font, load_release
+from .defense import embed_font, load_release, logo_svg
 
 SOURCE_END = 116.4
 GRAPHICS_DURATION = 40.0
@@ -206,11 +207,20 @@ def build(
     metrics = summarize(data)
     template = Path(__file__).with_name("viz") / "opener.html"
     html = template.read_text(encoding="utf-8")
+    logo_metadata = json.loads((template.parent / "genshin_logo.json").read_text(encoding="utf-8"))
+    logo_markup = logo_svg()
+    logo = {
+        "src": "data:image/png;base64,"
+        + base64.b64encode((template.parent / logo_metadata["asset"]).read_bytes()).decode("ascii"),
+        "bounds": logo_metadata["visible_bounds"],
+        "aspect": logo_metadata["display_aspect_ratio"],
+    }
     footer = f"主分析03  清洗{audit['rule_version']}  图表{manifest['settings']['version']}+{manifest['config_hash']}"
     for key, value in {
         "DATA": json.dumps(metrics, ensure_ascii=False).replace("</", "<\\/"),
         "SCENES": json.dumps(SCENES, ensure_ascii=False),
         "TIMING": json.dumps(timing),
+        "LOGO": json.dumps(logo),
         "FOOTER": footer,
     }.items():
         html = html.replace(f"__{key}__", value)
@@ -224,6 +234,7 @@ def build(
     assets.mkdir()
     prepare_video(background, assets / "background.mp4", timing, ffmpeg)
     player = (template.parent / "opener_player.html").read_text(encoding="utf-8")
+    player = player.replace("__GENSHIN_LOGO__", logo_markup)
     font, notice = embed_font(html + player, assets / "noto-sans-sc-subset.woff")
     html = html.replace("__FONT__", font).replace(
         "__FONT_LICENSE__", notice.replace("</script", "<\\/script")
@@ -239,6 +250,7 @@ def build(
         "# 答辩开场视频",
         "",
         "图表展示40秒，接1.2秒视频自身的入门白场，总长41.2秒，1920×1080，60fps。",
+        "片头和片尾标题中的原神采用官方原始标识，显示为白色艺术字，并沿用对应标题的发光效果。",
         "背景和声音均来自指定视频素材；图表仅使用已发布ADS。未叠加旧星空、缩放、光晕或背景漂移动效。",
         "",
         "| 时间 | 内容 |",
@@ -248,7 +260,7 @@ def build(
     storyboard += ["| 40–41.2秒 | 仅保留视频自然入门白场，所有图表、文字、遮罩和按钮均隐藏 |"]
     storyboard += [
         "",
-        "从index.html开始播放，片尾自动进入相邻defense_20261019_final目录的32页答辩。可跳过片头。MP4可单独播放或插入其他PPT。",
+        "从index.html开始播放，片尾自动进入相邻defense_20261019_final目录的完整答辩（含四人分工）。可跳过片头。MP4可单独播放或插入其他PPT。",
         "",
         "规模、卡池、月度峰值、账号中位数、名称榜均与答辩采用同次受保护聚合。名称按原始字符串精确汇总，未合并翻译别名；账号记录量不等于付费；留存记录无法推断官方概率或保底。",
         "",
@@ -263,7 +275,14 @@ def build(
     ]
     (output / "使用说明.md").write_text("\n".join(storyboard), encoding="utf-8")
     metadata = {
-        "video_version": "2.1.0",
+        "video_version": "2.2.0",
+        "video_wordmark": {
+            "source_url": logo_metadata["source_url"],
+            "asset_sha256": logo_metadata["sha256"],
+            "color": "#FFFFFF",
+            "glow_blur_pixels": {"intro": 25, "ending": 15},
+            "scenes_seconds": [[0, 4], [35, 40]],
+        },
         "duration_seconds": timing["duration"],
         "graphics_duration_seconds": GRAPHICS_DURATION,
         "width": 1920,

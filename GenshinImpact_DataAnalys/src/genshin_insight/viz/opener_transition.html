@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<style>html,body{margin:0;background:white;overflow:hidden}canvas{display:block;width:100vw;height:100vh}video{display:none}</style>
+<video id="source" preload="auto" muted playsinline></video>
+<video id="base" preload="metadata" muted playsinline></video>
+<canvas id="film" width="1920" height="1080"></canvas>
+<script>
+const S=__SETTINGS__,canvas=document.getElementById('film'),ctx=canvas.getContext('2d');
+const source=document.getElementById('source'),base=document.getElementById('base');source.src=S.sourceUrl;base.src=S.baseUrl;
+const full=new Image(),page=new Image(),official=new Image();full.src=S.coverUrl;page.src=S.coverWithoutLogoUrl;official.src=S.logoUrl;
+const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>1-(1-clamp(x))**5;
+let sourceLogo,targetLogo,blend,sourceBounds;
+const ready=(video,metadata=false)=>video.readyState>=(metadata?1:2)?Promise.resolve():new Promise((resolve,reject)=>{video.addEventListener(metadata?'loadedmetadata':'loadeddata',resolve,{once:true});video.addEventListener('error',reject,{once:true});});
+async function seek(time){if(Math.abs(source.currentTime-time)<.00001)return;await new Promise((resolve,reject)=>{source.addEventListener('seeked',resolve,{once:true});source.addEventListener('error',reject,{once:true});source.currentTime=time;});}
+function bitmap(width,height){const result=document.createElement('canvas');result.width=width;result.height=height;return result;}
+function prepareLogo(){
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,1920,1080);ctx.drawImage(source,0,0,1920,1080);
+  const pixels=ctx.getImageData(0,0,1920,S.maskY),data=pixels.data;
+  let left=1920,right=0,top=1080,bottom=0;
+  for(let y=100;y<S.maskY;y++)for(let x=350;x<1570;x++){const i=(y*1920+x)*4;if(data[i]+data[i+1]+data[i+2]<510){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}}
+  if(right<=left||bottom<=top)throw new Error('The selected source endpoint has no visible wordmark');
+  left-=2;top-=2;right+=3;bottom+=3;sourceBounds={x:left,y:top,width:right-left,height:bottom-top};
+  sourceLogo=bitmap(sourceBounds.width,sourceBounds.height);const c=sourceLogo.getContext('2d');c.drawImage(canvas,left,top,sourceBounds.width,sourceBounds.height,0,0,sourceBounds.width,sourceBounds.height);
+  const matte=c.getImageData(0,0,sourceLogo.width,sourceLogo.height);
+  for(let i=0;i<matte.data.length;i+=4){const alpha=255-Math.round((matte.data[i]+matte.data[i+1]+matte.data[i+2])/3);matte.data[i]=0;matte.data[i+1]=0;matte.data[i+2]=0;matte.data[i+3]=alpha<3?0:alpha;}
+  c.putImageData(matte,0,0);
+  targetLogo=bitmap(sourceLogo.width,sourceLogo.height);const target=targetLogo.getContext('2d'),[x,y,r,b]=S.logoBounds;target.drawImage(official,x,y,r-x,b-y,0,0,targetLogo.width,targetLogo.height);
+  const ink=target.getImageData(0,0,targetLogo.width,targetLogo.height);for(let i=0;i<ink.data.length;i+=4){ink.data[i]=26;ink.data[i+1]=34;ink.data[i+2]=51;}target.putImageData(ink,0,0);
+  blend=bitmap(sourceLogo.width,sourceLogo.height);
+}
+async function render(time){
+  ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.fillRect(0,0,1920,1080);
+  if(time<S.sourceDuration){
+    await seek(time);ctx.drawImage(source,0,0,1920,1080);ctx.fillStyle='#fff';ctx.fillRect(0,S.maskY,1920,1080-S.maskY);
+    return {phase:'source',time,logo:sourceBounds,coverOpacity:0};
+  }
+  const p=clamp((time-S.sourceDuration)/S.moveDuration),q=ease(p),mix=p*p,coverOpacity=p*p*p;
+  if(p>=1){ctx.drawImage(full,0,0);return {phase:'cover',time,progress:1,logo:S.target,coverOpacity:1};}
+  ctx.globalAlpha=coverOpacity;ctx.drawImage(page,0,0);ctx.globalAlpha=1;
+  const rect={};for(const key of ['x','y','width','height'])rect[key]=sourceBounds[key]+(S.target[key]-sourceBounds[key])*q;
+  const b=blend.getContext('2d');b.clearRect(0,0,blend.width,blend.height);b.globalCompositeOperation='source-over';b.globalAlpha=1-mix;b.drawImage(sourceLogo,0,0);b.globalCompositeOperation='lighter';b.globalAlpha=mix;b.drawImage(targetLogo,0,0);b.globalAlpha=1;b.globalCompositeOperation='source-over';
+  ctx.drawImage(blend,rect.x,rect.y,rect.width,rect.height);
+  return {phase:'motion',time,progress:p,logo:rect,coverOpacity};
+}
+window.renderTransition=render;window.transitionReady=false;
+Promise.all([ready(source),ready(base,true),full.decode(),page.decode(),official.decode()]).then(async()=>{
+  if(S.sourceDuration>=source.duration)throw new Error('The selected source segment exceeds the downloaded video');
+  await seek(S.sourceDuration);prepareLogo();window.transitionSourceBounds=sourceBounds;window.baseInfo={duration:base.duration,width:base.videoWidth,height:base.videoHeight};
+  await render(0);window.transitionReady=true;
+}).catch(error=>{document.body.dataset.error=String(error);throw error;});
+</script>
+</html>

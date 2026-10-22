@@ -1,6 +1,25 @@
 {
-  "video_version": "2.1.0",
-  "duration_seconds": 41.2,
+  "video_version": "2.3.0",
+  "video_wordmark": {
+    "source_url": "https://webstatic.mihoyo.com/dora/biz/mihoyo-hk4e-concept-animation/2.0.11/images/logo-gray-v2.aefe4134.png",
+    "asset_sha256": "d5a1125b162fea7bdff47a640345ce72ab5ba609561a29c1d1bfc971ac5ecfc8",
+    "color": "#FFFFFF",
+    "glow_blur_pixels": {
+      "intro": 25,
+      "ending": 15
+    },
+    "scenes_seconds": [
+      [
+        0,
+        4
+      ],
+      [
+        35,
+        40
+      ]
+    ]
+  },
+  "duration_seconds": 45.421333,
   "graphics_duration_seconds": 40.0,
   "width": 1920,
   "height": 1080,
@@ -12,13 +31,19 @@
     "audio": "AAC 160k"
   },
   "timing": {
-    "duration": 41.2,
+    "duration": 45.421333,
     "graphicsDuration": 40.0,
     "fadeStart": 39.6,
     "whiteAt": 41.0,
     "sourceStart": 75.2,
     "sourceEnd": 116.4,
-    "fps": 60
+    "fps": 60,
+    "logoTransition": {
+      "start": 41.2,
+      "sourceDuration": 2.0,
+      "moveDuration": 1.6,
+      "holdDuration": 0.6
+    }
   },
   "scenes": [
     [
@@ -241,21 +266,119 @@
     ]
   },
   "code_sha256": {
-    "opener.py": "62422bcb5a645ce50303f3f197b3e8de392ae5bcf917e5d06fac3b29ff53122e",
-    "opener.html": "759066b807308748ec52f59accf84bbed36c3b5eb1559008fb62208a8f0d1891",
-    "render_opener.cjs": "71846e2c89be59f7df149394fea502aced6dd1d00e16d7155c33ca1505385968",
-    "opener_player.html": "f7229d35e0584cd141acb9bc4d34ab3f9c5f51560cf3a91fcf2ff14baa855775"
+    "opener.py": "ae49b2d8ad75d198485667131aaae6383d978b041ee0787ff936187350b165c2",
+    "opener.html": "116997b288324b475e5ad1f3106d3596e5c8b5ddb5b895a1edc2b3cc71c63890",
+    "render_opener.cjs": "8729e9075c4e890f8e57f8bc8755562be813ab4e8c0595d0169d88e2c0e917a3",
+    "opener_player.html": "c37991bfac21c68a9c3026d4723df824a0b6a305b94c3e505e97a63c9f340dee"
   },
-  "output_video_sha256": "a0775a64a67b309c80f8d6e32157bb7575863843db516990ebc804335526eee9",
-  "output_video_bytes": 13722656,
+  "output_video_sha256": "6f95efc23ea5c5f88a992388feeb6b8d7c360ca9a32b8eb8be90e11b67297955",
+  "output_video_bytes": 14083632,
   "verification": {
-    "unit_and_contract_tests": 75,
+    "opener_unit_tests": 11,
     "layout_probes": 7,
+    "mp4_full_decode_verified": true,
+    "wordmark_glow_verified": true,
     "pure_white_tail_verified": true,
     "automatic_handoff_verified": true,
+    "skip_handoff_verified": true,
     "keyboard_navigation_verified": true,
-    "original_audio_correlation": 0.9999306214447857,
     "delivery_dependencies_verified": true,
-    "intermediate_media_removed": true
+    "intermediate_media_removed": true,
+    "transition_probes": 9,
+    "source_prompt_hidden": true,
+    "cover_alignment_verified": true,
+    "unit_and_contract_tests": 75,
+    "transition_desktop_and_mobile_verified": true,
+    "original_frame_indices_verified": [
+      156,
+      2280
+    ],
+    "handoff_pixel_difference": [
+      {
+        "viewport_width": 1920,
+        "mean_absolute_pixel_difference": 0.1908516589506173
+      },
+      {
+        "viewport_width": 390,
+        "mean_absolute_pixel_difference": 0.7126858265483857
+      }
+    ]
+  },
+  "player_branding": {
+    "color": "#FFFFFF",
+    "player_sha256": "ea42e079e242f25274c6bbc4084961d52864812c10d06af666a77d12c9c342f4",
+    "template_sha256": "b96ecab079e341e442826f43ce28a5dffb2607a84c97b4a909b6c479f0688971"
+  },
+  "updated_at": "2026-10-22T16:43:02.275394+08:00",
+  "base_output_video_sha256": "cc7f9925a87badbce7d6384388c07bfcc74009425c20bac814694930a10d514f",
+  "logo_transition": {
+    "source_url": "https://www.bilibili.com/video/BV16j411B7si/",
+    "source_video": "原神启动_BV16j411B7si.mp4",
+    "source_video_sha256": "efd7d5ece191de479141a396a09f33b3a6add76f656c3deea8af6d263665613f",
+    "source_segment_seconds": [
+      0,
+      2.0
+    ],
+    "start_seconds": 41.2,
+    "move_duration_seconds": 1.6,
+    "final_hold_seconds": 0.6,
+    "prompt_hidden": {
+      "y": 800,
+      "height": 280
+    },
+    "source_logo_box": {
+      "x": 721,
+      "y": 354,
+      "width": 471,
+      "height": 366
+    },
+    "cover_logo_box": {
+      "x": 143.99993896484375,
+      "y": 184.8000030517578,
+      "width": 223.20001220703125,
+      "height": 172.8000030517578
+    },
+    "deck_sha256": "8122c92d1c752f7fd2df7e3722a73b4dc2ccf66db2b9597ce40570cd5d445937",
+    "cover_slide_count": 29,
+    "original_segment_reencoded": false,
+    "download": {
+      "page_url": "https://www.bilibili.com/video/BV16j411B7si/",
+      "title": "4K60 原神启动相关素材",
+      "part": "直接启动",
+      "bvid": "BV16j411B7si",
+      "cid": 1236758096,
+      "streams": [
+        {
+          "id": 32,
+          "width": 852,
+          "height": 480,
+          "frameRate": "29.412",
+          "codecs": "avc1.64001F",
+          "bandwidth": 927707,
+          "type": "video",
+          "file": "source_video.m4s",
+          "bytes": 927707,
+          "sha256": "5d831800a45e00bbb3758f2900a8552f0c73e5cbce4725248c1a8b6a4ab65aba"
+        },
+        {
+          "id": 30280,
+          "width": 0,
+          "height": 0,
+          "frameRate": "",
+          "codecs": "mp4a.40.2",
+          "bandwidth": 109307,
+          "type": "audio",
+          "file": "source_audio.m4s",
+          "bytes": 109886,
+          "sha256": "b6759974f0bf9d8f54a32ba2c013cadab14e08e197cf532f4f417234b782ddcd"
+        }
+      ]
+    }
+  },
+  "transition_code_sha256": {
+    "opener_transition.py": "9252dd19dad040a3774068d3388f65c0e441716d6f21c1e7ebf8ae3b646896af",
+    "render_transition.cjs": "1701c375e6d5e1f16f5ff784031b75412fe0bbe66ce6f13a63f81614b400de92",
+    "opener_transition.html": "ef19baad6dc82440d9ea046257cd6a9f5a53dc0f9506218e61df75980360caf9",
+    "opener_player.html": "b96ecab079e341e442826f43ce28a5dffb2607a84c97b4a909b6c479f0688971"
   }
 }

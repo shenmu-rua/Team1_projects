@@ -1,7 +1,8 @@
 {
-  "deck_version": "1.1.0",
-  "created_at": "2026-10-20T17:14:13.818865+08:00",
-  "slides": 32,
+  "deck_version": "1.3.0",
+  "created_at": "2026-10-22T15:12:15.569844+08:00",
+  "slides": 29,
+  "qa_pairs": 16,
   "charts": [
     "A01",
     "A02",
@@ -12,11 +13,34 @@
     "A07"
   ],
   "offline": true,
+  "logo_source": {
+    "asset": "genshin_logo.png",
+    "source_page": "https://ys.mihoyo.com/main/",
+    "source_url": "https://webstatic.mihoyo.com/dora/biz/mihoyo-hk4e-concept-animation/2.0.11/images/logo-gray-v2.aefe4134.png",
+    "retrieved_on": "2026-10-22",
+    "sha256": "d5a1125b162fea7bdff47a640345ce72ab5ba609561a29c1d1bfc971ac5ecfc8",
+    "original_size": [
+      512,
+      512
+    ],
+    "visible_bounds": [
+      85,
+      69,
+      398,
+      457
+    ],
+    "display_aspect_ratio": 1.29,
+    "display_note": "原始PNG保持不变。SVG视窗去除透明边距，显示比例匹配用户参考图，显示颜色与正文墨黑一致。",
+    "rights": "原神标志属于米哈游。本项目仅将官网原始素材用于课程项目的主题标识。",
+    "display_color": "var(--ink)"
+  },
+  "team_assignment_source": "docs/分工任务清单.md；reports/course_materials_20261021_clean/04_数据与协作说明/分工与贡献说明.md",
+  "team_assignment_sha256": "5aa974b34c802ef77c455085c40a19834ef8c2ceb5f0895aa5f8793df40d9d0e",
   "source_config": "3cee80f4",
   "source_ads_sha256": "8b46a397333b1bd893c77f2d2dc0f8c9992e827921b0baa7fa25f4d7a2549f9f",
-  "builder_sha256": "6fc1d1aa5c7c7bd56c0ef2d31deb685dbe0d76e1a7a70b1a71990b84fb9f07bc",
-  "speech_sha256": "2874f70293c8109f8f5ba58d4e134a56542db11ef24b8e0f6012d1a5a84ccfdf",
-  "speech_cjk_characters": 7546,
-  "template_sha256": "9973d8c2a4b3dee4223cb2b20b5c06d3382e6f4553593ab8273a2eefd57dcca6",
+  "builder_sha256": "d4922da3d9b8247647b755b358827b57d5e04c7b1b03943350ca97fa42abdd8e",
+  "speech_sha256": "a6b13a656e353fee0518e55f8448bb8304aa31468595bfb2a32a7f77bbad369a",
+  "speech_cjk_characters": 6638,
+  "template_sha256": "373858554a6ddf62d550f61aa5be40313aae6a542ba4c3b30916765dbe5041a4",
   "font_license_sha256": "8d27031b6bccd14b1e1a3ead6530b7da83845b165a2643ee09844f8527f67159"
 }

@@ -29,7 +29,7 @@ genshin_insight = "src/genshin_insight"
 theme = "theme"
 
 [tool.setuptools.package-data]
-"genshin_insight.viz" = ["*.html", "*.txt", "*.cjs"]
+"genshin_insight.viz" = ["*.html", "*.txt", "*.cjs", "*.png", "*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
