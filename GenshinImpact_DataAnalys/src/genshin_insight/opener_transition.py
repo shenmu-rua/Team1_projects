@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 from . import config
 from .defense import embed_font, logo_svg
-from .opener import ffmpeg_executable
+from .opener import ffmpeg_executable, measure_flash
 
 
 def relative_url(target: Path, directory: Path) -> str:
@@ -97,6 +97,10 @@ def build(
             duration=result["duration"],
             graphicsDuration=timing.get("graphicsDuration", 40.0),
             whiteAt=timing.get("whiteAt", result["baseDuration"] - 0.2),
+            flashExpandStart=timing.get(
+                "flashExpandStart", round(result["baseDuration"] - 0.65, 6)
+            ),
+            flashExpandEnd=timing.get("flashExpandEnd", round(result["baseDuration"] - 0.25, 6)),
             logoTransition={
                 "start": result["baseDuration"],
                 "sourceDuration": source_duration,
@@ -104,6 +108,11 @@ def build(
                 "holdDuration": hold_duration,
             },
         )
+        timing["flashProfile"] = measure_flash(
+            work / "combined.mp4", ffmpeg_executable(ffmpeg), timing
+        )
+        timing["flashExpandStart"] = timing["flashProfile"]["curve"][0][0]
+        timing["flashExpandEnd"] = timing["flashProfile"]["curve"][-1][0]
         assets = work / "assets"
         assets.mkdir()
         player = (template / "opener_player.html").read_text(encoding="utf-8")
@@ -180,6 +189,8 @@ def build(
         (output / "使用说明.md").write_text(
             "# 答辩开场视频\n\n"
             "原有40秒图表与白色发光艺术字保留。入门白场后接入指定启动素材，隐藏标识下方提示文字。\n"
+            "播放器按成片逐帧白光覆盖率连续放大视频至铺满窗口，仅在稳定白场内恢复比例；"
+            "底色与成片边缘颜色同步。播放不自动请求浏览器全屏。\n"
             f"{result['baseDuration']:.1f}秒开始出现白底原神标识，"
             f"{result['baseDuration'] + source_duration:.1f}秒开始缩小、移动并渐显答辩首页，"
             f"{result['duration']:.1f}秒切入可翻页的完整答辩。\n\n"

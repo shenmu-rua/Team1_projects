@@ -117,6 +117,16 @@ def test_build_keeps_intermediate_media_out_of_the_delivery_folder(
     monkeypatch.setattr(opener, "prepare_video", prepare_video)
     monkeypatch.setattr(opener, "embed_font", embed_font)
     monkeypatch.setattr(opener, "render", render)
+    monkeypatch.setattr(
+        opener,
+        "measure_flash",
+        lambda *args: {
+            "curve": [[40.4, 0], [40.85, 1]],
+            "solidAt": 40.97,
+            "resetEnd": 41.15,
+            "surface": [[40.97, [253, 253, 253]]],
+        },
+    )
     output = tmp_path / "delivery"
     result = opener.build(
         analysis, output, source, ffmpeg="synthetic-ffmpeg", prepare_only=prepare_only
@@ -129,3 +139,55 @@ def test_build_keeps_intermediate_media_out_of_the_delivery_folder(
     else:
         assert result == output / "index.html" and result.is_file()
         assert list((tmp_path / ".pytest_cache").iterdir()) == []
+
+
+def test_flash_profile_uses_decoded_times_and_restores_only_during_solid_white(
+    tmp_path, monkeypatch
+):
+    video = tmp_path / "synthetic.mp4"
+    video.write_bytes(b"synthetic video")
+    pixels = 160 * 90
+    frames = [
+        bytes([0] * 3) * pixels,
+        bytes([240] * 3) * (pixels // 2) + bytes([30] * 3) * (pixels // 2),
+        bytes([249] * 3) * pixels,
+        bytes([253] * 3) * pixels,
+        bytes([255] * 3) * pixels,
+    ]
+    times = [40.37, 40.52, 40.85, 40.97, 41.21]
+    result = type(
+        "Decoded",
+        (),
+        {
+            "stdout": b"".join(frames),
+            "stderr": b"\n".join(
+                f"[showinfo] n: {index} pts: 0 pts_time:{time}".encode()
+                for index, time in enumerate(times)
+            ),
+        },
+    )()
+    monkeypatch.setattr(opener.subprocess, "run", lambda *args, **kwargs: result)
+    timing = video_timing() | {"logoTransition": {"start": 41.2}}
+    profile = opener.measure_flash(video, "synthetic-ffmpeg", timing)
+    assert profile["curve"][0] == [40.37, 0]
+    assert 0 < profile["curve"][1][1] < 1
+    assert profile["curve"][-1] == [40.85, 1]
+    assert profile["solidAt"] == 40.97
+    assert profile["solidAt"] < profile["resetEnd"] < 41.2
+    assert profile["surface"] == [[40.97, [253, 253, 253]], [41.21, [255, 255, 255]]]
+
+
+def test_flash_profile_rejects_light_without_a_solid_white_frame(tmp_path, monkeypatch):
+    video = tmp_path / "synthetic.mp4"
+    video.write_bytes(b"synthetic video")
+    result = type(
+        "Decoded",
+        (),
+        {
+            "stdout": bytes([249] * 3) * (160 * 90),
+            "stderr": b"[showinfo] n: 0 pts: 0 pts_time:40.85",
+        },
+    )()
+    monkeypatch.setattr(opener.subprocess, "run", lambda *args, **kwargs: result)
+    with pytest.raises(ValueError, match="连续纯白帧"):
+        opener.measure_flash(video, "synthetic-ffmpeg", video_timing())

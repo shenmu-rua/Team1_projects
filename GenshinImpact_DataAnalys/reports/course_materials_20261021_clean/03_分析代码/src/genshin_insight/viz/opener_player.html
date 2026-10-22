@@ -5,20 +5,16 @@
 <style>
 @font-face{font-family:Opener;src:url(data:font/woff;base64,__FONT__) format('woff');font-weight:100 900}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:#030611;color:#f7f5ef;font-family:Opener,sans-serif;overflow:hidden}
-#screen{height:100%;width:100%;position:relative;background:#030611}video{width:100%;height:100%;object-fit:contain}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#f6f8fc;opacity:0;pointer-events:none}
-#cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#030611a8}
+#screen{height:100%;width:100%;position:relative;overflow:hidden;background:#030611}video{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform}iframe{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;background:#f6f8fc;opacity:0;pointer-events:none}
+#cover{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#030611a8}
 h1{font-size:clamp(28px,4vw,64px);font-weight:700;margin:0;color:#fff;display:flex;align-items:center;justify-content:center;gap:.2em;max-width:calc(100% - 48px);line-height:1.35}
 h1 .genshin-logo{display:block;width:2.15em;height:1.667em;flex:none;overflow:hidden}
 h1 .genshin-logo-image{filter:brightness(0) invert(1)}
 .title-rest{min-width:0}p{font-size:clamp(14px,1.7vw,22px);color:#b0bbce;margin:0}
-button{font:inherit;cursor:pointer}#start{background:#e6c68c;color:#101523;border:0;padding:15px 38px;font-size:22px;margin-top:18px}#skip{position:absolute;right:28px;top:24px;background:#070e20b8;color:#f7f5ef;border:1px solid #5d708d;padding:9px 16px;font-size:16px}
+button{font:inherit;cursor:pointer}#start{background:#e6c68c;color:#101523;border:0;padding:15px 38px;font-size:22px;margin-top:18px}#skip{position:absolute;z-index:4;right:28px;top:24px;background:#070e20b8;color:#f7f5ef;border:1px solid #5d708d;padding:9px 16px;font-size:16px}
 #handoff{position:absolute;inset:0;background:#fdfdfd;opacity:0;pointer-events:none;z-index:5}
 body.playing #cover,body.foreground-hidden #skip{display:none}
-body.white-tail #screen,body.in-deck #screen{background:#fdfdfd}
-body.white-tail #handoff,body.in-deck #handoff{opacity:1}
-body.logo-transition #handoff{opacity:0}
-body.logo-transition #screen{background:#fff}
-body.cover-reveal #screen,body.seamless-handoff #screen{background:#f6f8fc}
+body.manual-handoff #handoff{opacity:1}
 body.seamless-handoff #handoff{opacity:0;transition:none}
 body.in-deck iframe{opacity:1;pointer-events:auto}body.in-deck video,body.in-deck #cover,body.in-deck #skip{display:none}
 body.reveal-deck #handoff{opacity:0;transition:opacity .32s linear}
@@ -33,35 +29,57 @@ body.reveal-deck #handoff{opacity:0;transition:opacity .32s linear}
 <div id="handoff" aria-hidden="true"></div>
 </div>
 <script>
-const TIMING=__TIMING__,video=document.getElementById('video'),deck=document.getElementById('deck');
+const TIMING=__TIMING__,video=document.getElementById('video'),deck=document.getElementById('deck'),screen=document.getElementById('screen');
 const deckReady=new Promise(resolve=>deck.addEventListener('load',resolve,{once:true}));
-let entering=false;
+let entering=false,presentedTime=0;
+const clamp=value=>Math.max(0,Math.min(1,value)),smooth=value=>{const p=clamp(value);return p*p*(3-2*p);};
+function sample(points,time){
+  let next=points.findIndex(point=>point[0]>time);
+  if(next===0)return points[0][1];if(next===-1)return points.at(-1)[1];
+  const [a,b]=[points[next-1],points[next]],p=clamp((time-a[0])/(b[0]-a[0]));
+  return Array.isArray(a[1])?a[1].map((value,index)=>value+(b[1][index]-value)*p):a[1]+(b[1]-a[1])*p;
+}
 function syncHandoff(time){
   if(entering)return;
+  presentedTime=time;
   document.body.classList.toggle('foreground-hidden',time>=TIMING.graphicsDuration);
   const transition=TIMING.logoTransition;
+  const profile=TIMING.flashProfile??{curve:[[TIMING.flashExpandStart,0],[TIMING.flashExpandEnd,1]],solidAt:TIMING.whiteAt,resetEnd:TIMING.whiteAt+.15,surface:[[TIMING.whiteAt,[253,253,253]]]};
+  const frame=screen.getBoundingClientRect(),vw=video.videoWidth||1920,vh=video.videoHeight||1080;
+  const fit=Math.min(frame.width/vw,frame.height/vh),coverZoom=Math.max(frame.width/(vw*fit),frame.height/(vh*fit));
+  const progress=sample(profile.curve,time),reset=smooth((time-profile.solidAt)/(profile.resetEnd-profile.solidAt));
+  // Enlarge the actual door/light frames. Reset only during measured stable white frames.
+  const zoom=1+(coverZoom-1)*progress*(1-reset);
+  video.style.transform=`scale(${zoom})`;
+  screen.style.backgroundColor=time>=profile.solidAt?`rgb(${sample(profile.surface,time).join(',')})`:'#030611';
+  document.body.classList.toggle('door-flash',time>=profile.curve[0][0]&&time<profile.resetEnd);
   document.body.classList.toggle('white-tail',time>=TIMING.whiteAt&&(!transition||time<transition.start));
   document.body.classList.toggle('logo-transition',Boolean(transition&&time>=transition.start));
   document.body.classList.toggle('cover-reveal',Boolean(transition&&time>=transition.start+transition.sourceDuration+transition.moveDuration));
 }
 async function enterDefense({seamless=false}={}){
   if(entering)return;entering=true;video.pause();
+  document.body.classList.remove('door-flash');
   document.body.classList.add('foreground-hidden');
-  if(seamless)document.body.classList.add('seamless-handoff');else document.body.classList.add('white-tail');
+  if(seamless)document.body.classList.add('seamless-handoff');else document.body.classList.add('manual-handoff');
   await deckReady;
   deck.inert=false;deck.removeAttribute('aria-hidden');deck.removeAttribute('tabindex');
   document.body.classList.add('in-deck');
   requestAnimationFrame(()=>requestAnimationFrame(()=>{document.body.classList.add('reveal-deck');deck.focus();}));
 }
 async function startPlayback(){
-  try{await video.play();document.body.classList.add('playing');try{await document.documentElement.requestFullscreen();}catch{}}
+  try{await video.play();document.body.classList.add('playing');}
   catch{document.getElementById('error').textContent='请将开场视频与此页面放在同一目录，或使用右上角按钮进入答辩。';}
 }
 document.getElementById('start').onclick=startPlayback;
 video.onended=()=>enterDefense({seamless:Boolean(TIMING.logoTransition)});document.getElementById('skip').onclick=()=>enterDefense();
 video.onclick=()=>video.paused?startPlayback():video.pause();
-video.addEventListener('timeupdate',()=>syncHandoff(video.currentTime));
-if(video.requestVideoFrameCallback){const observe=(_,metadata)=>{syncHandoff(metadata.mediaTime);if(!entering)video.requestVideoFrameCallback(observe);};video.requestVideoFrameCallback(observe);}
+if(video.requestVideoFrameCallback){
+  const observe=(_,metadata)=>{syncHandoff(metadata.mediaTime);if(!entering)video.requestVideoFrameCallback(observe);};video.requestVideoFrameCallback(observe);
+}else{
+  const observe=()=>{syncHandoff(video.currentTime);if(!entering)requestAnimationFrame(observe);};requestAnimationFrame(observe);
+}
+window.addEventListener('resize',()=>syncHandoff(presentedTime));
 document.addEventListener('keydown',event=>{if(!entering&&event.code==='Space'){event.preventDefault();video.paused?startPlayback():video.pause();}});
 window.enterDefense=enterDefense;window.syncHandoff=syncHandoff;window.openerTiming=TIMING;
 </script>

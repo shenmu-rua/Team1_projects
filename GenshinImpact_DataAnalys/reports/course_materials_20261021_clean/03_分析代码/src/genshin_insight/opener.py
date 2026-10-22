@@ -7,6 +7,7 @@ import base64
 import hashlib
 import json
 import math
+import re
 import shutil
 import subprocess
 import tempfile
@@ -98,6 +99,8 @@ def video_timing(source_end: float = SOURCE_END) -> dict:
         "graphicsDuration": GRAPHICS_DURATION,
         "fadeStart": GRAPHICS_DURATION - 0.4,
         "whiteAt": duration - 0.2,
+        "flashExpandStart": round(duration - 0.65, 6),
+        "flashExpandEnd": round(duration - 0.25, 6),
         "sourceStart": round(source_end - duration, 6),
         "sourceEnd": source_end,
         "fps": VIDEO_FPS,
@@ -110,6 +113,79 @@ def ffmpeg_executable(ffmpeg: str | None = None) -> str:
 
         ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
     return ffmpeg
+
+
+def measure_flash(video: Path, ffmpeg: str, timing: dict) -> dict:
+    """从成片逐帧测量白光覆盖率；在纯白帧内恢复画幅，避免固定时刻换底色。"""
+    start = timing["graphicsDuration"] - 0.1
+    logo_start = timing.get("logoTransition", {}).get("start", timing["duration"])
+    width, height = 160, 90
+    decoded = subprocess.run(
+        [
+            ffmpeg,
+            "-hide_banner",
+            "-i",
+            str(video),
+            "-an",
+            "-vf",
+            f"select=gte(t\\,{start}),scale={width}:{height},format=rgb24,showinfo",
+            "-vsync",
+            "0",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    times = [
+        float(value)
+        for value in re.findall(rb"\bn:\s*\d+[^\r\n]*?\bpts_time:([\d.]+)", decoded.stderr)
+    ]
+    size = width * height * 3
+    if not times or len(decoded.stdout) != len(times) * size:
+        raise ValueError("无法逐帧对齐成片白光与媒体时间。")
+    curve, surface, solid_at, maximum = [], [], None, 0.0
+    for index, time in enumerate(times):
+        frame = decoded.stdout[index * size : (index + 1) * size]
+        if time < logo_start:
+            white = sum(
+                min(pixel) >= 239
+                for pixel in zip(frame[0::3], frame[1::3], frame[2::3], strict=True)
+            ) / (width * height)
+            maximum = max(maximum, min(1.0, max(0.0, (white - 0.01) / 0.985)))
+            curve.append([round(time, 6), round(maximum, 6)])
+            solid = min(frame) >= 250 and max(frame) - min(frame) <= 4
+            if solid_at is None and solid:
+                solid_at = time
+            if (
+                solid_at is not None
+                and time <= min(solid_at + 0.18, logo_start - 0.025)
+                and not solid
+            ):
+                raise ValueError("恢复画幅期间必须持续保持稳定白场。")
+        if solid_at is not None:
+            # Small corner patch avoids both the central logo and cover typography.
+            corner = b"".join(frame[row * width * 3 : row * width * 3 + 12] for row in range(4))
+            rgb = [round(sum(corner[channel::3]) / 16, 3) for channel in range(3)]
+            surface.append([round(time, 6), rgb])
+    if solid_at is None or maximum < 1 or logo_start - solid_at < 0.08:
+        raise ValueError("片尾缺少可无缝恢复画幅的连续纯白帧。")
+    # Keep one zero point before the visible flash, then every native frame.
+    first = next(index for index, (_, progress) in enumerate(curve) if progress > 0)
+    curve = curve[max(0, first - 1) :]
+    end = next(time for time, progress in curve if progress == 1)
+    curve = [point for point in curve if point[0] <= end]
+    return {
+        "method": "native-frame-white-coverage",
+        "video_sha256": hashlib.sha256(video.read_bytes()).hexdigest(),
+        "curve": curve,
+        "solidAt": round(solid_at, 6),
+        "resetEnd": round(min(solid_at + 0.18, logo_start - 0.025), 6),
+        "surface": surface,
+    }
 
 
 def prepare_video(source: Path, target: Path, timing: dict, ffmpeg: str) -> None:
@@ -265,7 +341,8 @@ def build(
         "规模、卡池、月度峰值、账号中位数、名称榜均与答辩采用同次受保护聚合。名称按原始字符串精确汇总，未合并翻译别名；账号记录量不等于付费；留存记录无法推断官方概率或保底。",
         "",
         f"背景从原视频{timing['sourceStart']:.3f}秒裁到{timing['sourceEnd']:.3f}秒，原速播放。",
-        "图表前景39.6–40秒淡出；40秒起透明清空，背景不再有暗化遮罩。41秒起已全白，41.2秒时无黑帧接入预加载的答辩。",
+        "图表前景39.6–40秒淡出；40秒起透明清空。播放器按成片逐帧白光覆盖率连续放大视频至铺满窗口，"
+        "仅在稳定白场内恢复比例，底色与成片边缘颜色同步；播放不自动请求浏览器全屏。41.2秒无黑帧接入答辩。",
         "使用同段视频原声，仅在首尾做极短音量淡入淡出以避免切口爆音，没有混入原开场配乐。",
         "字体为SIL OFL许可Noto Sans SC，许可附在assets。",
         "",
@@ -317,6 +394,14 @@ def build(
         return work / "motion.html"
     try:
         render(output, ffmpeg, node, work)
+        timing["flashProfile"] = measure_flash(output / "开场视频.mp4", ffmpeg, timing)
+        timing["flashExpandStart"] = timing["flashProfile"]["curve"][0][0]
+        timing["flashExpandEnd"] = timing["flashProfile"]["curve"][-1][0]
+        (output / "index.html").write_text(
+            player.replace("__FONT__", font).replace("__TIMING__", json.dumps(timing)),
+            encoding="utf-8",
+            newline="\n",
+        )
         metadata["output_video_sha256"] = hashlib.sha256(
             (output / "开场视频.mp4").read_bytes()
         ).hexdigest()

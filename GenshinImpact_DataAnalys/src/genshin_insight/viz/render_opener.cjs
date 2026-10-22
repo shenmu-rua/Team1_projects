@@ -72,7 +72,7 @@ async function main(){
     await page.waitForFunction(()=>document.body.classList.contains('foreground-hidden'));assert(!(await page.locator('#skip').isVisible()));
     await page.locator('video').evaluate(video=>{video.currentTime=41.05;});
     await page.waitForFunction(()=>document.body.classList.contains('white-tail'));
-    assert.equal(await page.locator('#handoff').evaluate(node=>getComputedStyle(node).opacity),'1');
+    assert.equal(await page.locator('#handoff').evaluate(node=>getComputedStyle(node).opacity),'0');
     assert(!(await page.locator('#cover').isVisible()));await page.screenshot({path:path.join(qa,'player_pure_white.png')});
     await page.locator('video').evaluate(video=>video.play());await page.waitForFunction(()=>document.body.classList.contains('reveal-deck'),{timeout:15000});
     await page.waitForFunction(()=>getComputedStyle(document.getElementById('handoff')).opacity==='0');
