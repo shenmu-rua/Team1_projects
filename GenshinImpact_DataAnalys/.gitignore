@@ -2,6 +2,7 @@
 /data/
 /outputs/
 /artifacts/
+/reports/dashboard_*/
 .ipynb_checkpoints/
 
 # Original dataset folders may contain account identifiers in paths.

@@ -1,0 +1,31 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Genshin Charts" type="PythonConfigurationType" factoryName="Python">
+    <option name="ENV_FILES" value="" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="PYTHONUTF8" value="1" />
+      <env name="MPLCONFIGDIR" value="$USER_HOME$/Desktop/Team1_projects/GenshinImpact_DataAnalys/.pytest_cache/matplotlib" />
+      <env name="TEMP" value="$USER_HOME$/Desktop/Team1_projects/GenshinImpact_DataAnalys/.pytest_cache" />
+      <env name="TMP" value="$USER_HOME$/Desktop/Team1_projects/GenshinImpact_DataAnalys/.pytest_cache" />
+    </envs>
+    <option name="SDK_HOME" value="$USER_HOME$/Desktop/Team1_projects/GenshinImpact_DataAnalys/.venv/Scripts/python.exe" />
+    <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop/Team1_projects/GenshinImpact_DataAnalys" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="false" />
+    <option name="ADD_SOURCE_ROOTS" value="false" />
+    <option name="DEBUG_JUST_MY_CODE" value="true" />
+    <module name="" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="RUN_TOOL" value="" />
+    <option name="SCRIPT_NAME" value="genshin_insight" />
+    <option name="PARAMETERS" value="charts" />
+    <option name="SHOW_COMMAND_LINE" value="false" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="true" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+</component>

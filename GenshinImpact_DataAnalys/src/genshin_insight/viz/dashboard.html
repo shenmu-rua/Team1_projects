@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="原神留存抽卡记录的交互式数据观测大屏。卡池联动、月度趋势、时间热力与五星观察。">
+  <meta name="color-scheme" content="light">
+  <title>原神 · 祈愿数据观测</title>
+  <style>__STYLE__</style>
+</head>
+<body>
+<svg class="symbol-library" aria-hidden="true"><defs>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2.6 6.9L22 12l-7.4 3.1L12 22l-2.6-6.9L2 12l7.4-3.1z"/><path d="M12 7v10M7 12h10"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 4l12 8-12 8z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 4v16M16 4v16"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 9a8 8 0 111 9M4 3v6h6"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 3h7v7m0-7L13 11M10 21H3v-7m0 7l8-8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-3a7 7 0 0114 0v3M17 4a4 4 0 010 8m2 3a6 6 0 013 5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v17h17M8 16v-5m5 5V6m5 10V9"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M5 19L19 5"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6l6 6-6 6"/></symbol>
+</defs></svg>
+<div id="viewport">
+<main id="dashboard" aria-label="原神祈愿数据观测大屏">
+  <header class="masthead">
+    <div class="brand">
+      <div class="brand-mark"><svg><use href="#i-spark"/></svg><span></span></div>
+      <div><div class="eyebrow">GENSHIN IMPACT <span>/</span> WISH ARCHIVE</div><h1>祈愿数据观测<span class="title-dot">.</span></h1></div>
+      <div class="edition"><span>原神抽卡数据分析</span><small>DESCRIPTIVE ANALYTICS · DS03</small></div>
+    </div>
+    <div class="masthead-right">
+      <div class="archive-status"><i></i>历史数据 · 已归档</div>
+      <div class="clock"><strong id="clock-time">--:--:--</strong><small id="clock-date">展示时间 · 北京时间</small></div>
+      <button class="icon-button" id="help-button" aria-label="查看数据口径说明" title="数据口径说明"><svg><use href="#i-info"/></svg></button>
+      <button class="outline-button" id="fullscreen-button" title="F：切换全屏"><svg><use href="#i-full"/></svg><span>全屏展示</span></button>
+    </div>
+  </header>
+
+  <nav class="filterbar" aria-label="卡池筛选">
+    <div class="filter-label"><span class="tiny-diamond"></span>观测卡池</div>
+    <div class="pool-tabs" role="group" aria-label="选择观测卡池">
+      <button data-pool="all" class="active" aria-pressed="true">全部卡池</button>
+      <button data-pool="301" aria-pressed="false"><i style="--dot:var(--pool-301)"></i>角色活动</button>
+      <button data-pool="302" aria-pressed="false"><i style="--dot:var(--pool-302)"></i>武器活动</button>
+      <button data-pool="200" aria-pressed="false"><i style="--dot:var(--pool-200)"></i>常驻祈愿</button>
+      <button data-pool="100" aria-pressed="false"><i style="--dot:var(--pool-100)"></i>新手祈愿</button>
+    </div>
+    <span class="filter-scope">联动规模、月度与五星观察</span>
+    <div class="filter-actions"><button id="reset-button" class="text-button" title="R：重置筛选"><svg><use href="#i-reset"/></svg>复位</button><span class="divider"></span><button id="tour-button" class="text-button" aria-pressed="false" title="P：开始或暂停卡池轮播"><svg><use href="#i-play"/></svg><span>自动轮播</span><small id="tour-count">8s</small></button></div>
+  </nav>
+
+  <section class="metrics" aria-label="关键指标" id="metrics"></section>
+
+  <section class="chart-grid" aria-label="交互分析图表">
+    <article class="panel composition-panel" id="composition-panel">
+      <div class="panel-heading"><div><div class="panel-kicker">01 / STRUCTURE</div><h2 id="composition-title">角色活动贡献主要记录</h2></div><button class="expand-button" data-expand="composition" aria-label="放大卡池构成"><svg><use href="#i-expand"/></svg></button></div>
+      <p class="panel-subtitle">各池记录量与全局占比 · 点击联动</p>
+      <div id="composition" class="composition"></div>
+      <div class="panel-note"><span class="tiny-diamond"></span>角色双池 301 / 400 已合并统计</div>
+    </article>
+
+    <article class="panel trend-panel" id="trend-panel">
+      <div class="panel-heading"><div><div class="panel-kicker">02 / MONTHLY TREND</div><h2 id="trend-title">月度留存记录趋势</h2></div><div class="heading-actions"><span class="tag" id="trend-scope">全部卡池</span><button class="expand-button" data-expand="trend" aria-label="放大月度趋势"><svg><use href="#i-expand"/></svg></button></div></div>
+      <div class="trend-toolbar"><div id="trend-legend" class="legend"></div><div class="date-controls"><label><span class="sr-only">开始月份</span><select id="month-start" aria-label="开始月份"></select></label><span>—</span><label><span class="sr-only">结束月份</span><select id="month-end" aria-label="结束月份"></select></label><div class="range-shortcuts"><button data-range="6">6个月</button><button data-range="12">12个月</button><button data-range="all" class="active">全部</button></div></div></div>
+      <div id="trend" class="trend-chart" aria-label="月度折线图"></div>
+      <div class="trend-reading" id="trend-reading"></div>
+      <p class="panel-footnote">按原始时间自然月累计，时区未知；起止月可能不完整；抑制格保留缺口。</p>
+    </article>
+
+    <article class="panel names-panel" id="names-panel">
+      <div class="panel-heading"><div><div class="panel-kicker">06 / FIVE-STAR NAMES</div><h2>五星原始名称榜</h2></div><span class="tag global">全局</span></div>
+      <div class="rank-summary"><strong id="top-share">--<span>%</span></strong><div>前 <b id="names-count">12</b> 名覆盖<br><span>全部五星记录</span></div><svg class="rank-star"><use href="#i-spark"/></svg></div>
+      <div class="search-field"><svg><use href="#i-search"/></svg><input id="name-search" type="search" placeholder="搜索前12个原始名称" aria-label="搜索前12个原始名称" autocomplete="off"><span>/</span></div>
+      <div class="rank-toolbar"><span id="rank-count">12 个原始名称</span><button id="rank-sort" class="text-button" aria-label="切换名称记录排序">记录数 ↓</button></div>
+      <ol id="names" class="name-list"></ol>
+      <p class="rank-note">按精确原始名称累计，不合并多语言别名。<br>记录次数受卡池、时间与留存影响，不代表人气。</p>
+    </article>
+
+    <article class="panel volume-panel" id="volume-panel">
+      <div class="panel-heading"><div><div class="panel-kicker">03 / ACCOUNT DISTRIBUTION</div><h2 id="volume-title">账号留存记录量</h2></div><span class="tag global">全局</span></div>
+      <div class="volume-intro"><strong id="volume-median">744</strong><span>抽 / 账号中位数</span><button class="expand-button" data-expand="volume" aria-label="放大账号分布"><svg><use href="#i-expand"/></svg></button></div>
+      <div id="volume" class="volume-chart"></div>
+      <p class="panel-footnote">来源内去重账号 · 区间已安全合箱 · 不换算消费</p>
+    </article>
+
+    <article class="panel heatmap-panel" id="heatmap-panel">
+      <div class="panel-heading"><div><div class="panel-kicker">04 / TEMPORAL PATTERN</div><h2 id="heatmap-title">星期 × 小时留存矩阵</h2></div><div class="heading-actions"><span class="tag global">全局</span><button class="expand-button" data-expand="heatmap" aria-label="放大星期小时矩阵"><svg><use href="#i-expand"/></svg></button></div></div>
+      <p class="panel-subtitle">累计抽数 · 格内单位：万抽 · 悬停查看精确值</p>
+      <div id="heatmap" class="heatmap-chart"></div>
+      <div class="heatmap-footer"><span>时区及各时段曝光天数未知，不推算活跃</span><div class="color-key"><span>0</span><i></i><span id="heatmap-max"></span></div></div>
+    </article>
+
+    <article class="panel insight-panel" id="insight-panel">
+      <div class="panel-heading"><div><div class="panel-kicker">05 / FIVE-STAR INSIGHTS</div><h2>五星记录观察</h2></div><div class="heading-actions"><span class="tag" id="insight-scope">角色活动</span><button class="expand-button" data-expand="insight" aria-label="放大五星记录观察"><svg><use href="#i-expand"/></svg></button></div></div>
+      <div class="insight-tabs" role="group" aria-label="五星观察指标"><button data-insight="gap" class="active" aria-pressed="true">相邻五星间隔</button><button data-insight="rate" aria-pressed="false">账号分组占比</button></div>
+      <div id="insight" class="insight-chart"></div>
+      <div id="insight-reading" class="insight-reading"></div>
+      <p class="panel-footnote" id="insight-note"></p>
+    </article>
+  </section>
+
+  <footer class="page-footer"><div><span class="source-dot"></span><strong>DS03</strong><span id="source-period">2020.12.03 — 2022.07.26</span><span class="footer-sep">/</span><span>公开留存记录 · 描述性分析</span></div><div><span>来源：已发布受保护 ADS</span><span class="footer-sep">/</span><span id="source-version"></span><span class="footer-sep">/</span><button id="method-button">口径与限制 <svg><use href="#i-arrow"/></svg></button></div></footer>
+</main>
+</div>
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+<div id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<dialog id="detail-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="eyebrow">WISH ARCHIVE / EXPLORER</span><button id="dialog-close" class="icon-button" aria-label="关闭详情"><svg><use href="#i-close"/></svg></button></div><h2 id="dialog-title"></h2><div id="dialog-content"></div><div class="dialog-bottom">只展示已发布聚合 · 隐藏格不补零、不回推<span>ESC 关闭</span></div></dialog>
+<script id="dashboard-data" type="application/json">__DATA__</script>
+<script id="font-license" type="text/plain">__FONT_LICENSE__</script>
+<script>__SCRIPT__</script>
+</body>
+</html>

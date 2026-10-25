@@ -60,6 +60,13 @@ python -m venv .venv
 结构检查和清洗仅依赖 Python 标准库；绘图、分析和开发依赖分别放在 `viz`、`analysis`、`dev` 分组。
 已有对应环境时，可直接在本目录运行 `python -m pytest`，无需先安装本项目。
 
+本机已有 `uv.lock` 时，也可在本项目目录一次安装全部可选依赖；命令复用 `.venv`，
+按锁定版本安装，不需要先激活环境，也不依赖 `.venv` 内提供 pip：
+
+```powershell
+uv sync --locked --all-extras --cache-dir .pytest_cache/uv
+```
+
 命令行安装后：
 
 ```powershell
@@ -70,6 +77,43 @@ python -m genshin_insight schema --database .\gacha_db\genshin_gacha.db
 python -m genshin_insight clean
 python -m genshin_insight charts
 ```
+
+### 在 PyCharm 运行图表入口
+
+用 PyCharm 打开父目录 `Team1_projects/` 或本项目 `GenshinImpact_DataAnalys/`，
+从运行配置下拉框选择 **Genshin Charts**。本机配置保存在
+[.run/Genshin_Charts.run.xml](.run/Genshin_Charts.run.xml)，
+以本项目为工作目录，通过 `genshin_insight` 模块和 `charts` 参数调用统一入口。
+运行时只读最新清洗库，阶段进度输出到控制台，八张图与报告写入新的 `image/analysis_*/`。
+Matplotlib 缓存及临时文件保存在本项目 `.pytest_cache/`；使用普通 Run 输出，不启用 Python Console。
+配置通过 `$USER_HOME$/Desktop/Team1_projects/GenshinImpact_DataAnalys` 定位本机项目，
+避免父目录窗口把 `$PROJECT_DIR$` 解析成 `Team1_projects/`。移动项目后需更新配置中的路径。
+
+如果保留原有 `charts` 配置，请在 **Run → Edit Configurations** 中改成以下值：
+
+| 配置项 | 值 |
+| --- | --- |
+| 运行目标类型 | **Module name**（模块名称） |
+| Module name | `genshin_insight` |
+| Parameters | `charts` |
+| Python interpreter | `C:\Users\shenmu\Desktop\Team1_projects\GenshinImpact_DataAnalys\.venv\Scripts\python.exe` |
+| Working directory | `C:\Users\shenmu\Desktop\Team1_projects\GenshinImpact_DataAnalys` |
+| Environment variables | `PYTHONUTF8=1;PYTHONUNBUFFERED=1` |
+
+控制台显示 `{"stage": "月度聚合"}`、`{"stage": "星期与小时聚合"}` 表示正在处理数据。
+星期小时阶段需要扫描清洗明细并聚合，期间可能暂时没有新输出。完成后显示
+`{"stage": "完成"}`，再输出结果目录及 `"figures": 8`。此命令生成文件，不自动弹出图形窗口。
+
+`charts.py` 是包内业务模块；直接右键运行该文件会让 `from . import config`
+失去父包上下文，出现 `attempted relative import with no known parent package`。
+统一入口为 `python -m genshin_insight charts`；终端中可以先验证：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 -m genshin_insight charts --help
+.\.venv\Scripts\python.exe -X utf8 -m genshin_insight charts
+```
+
+界面字段含义可参考 [PyCharm Python 运行配置文档](https://www.jetbrains.com/help/pycharm/run-debug-configuration-python.html)。
 
 无参数和帮助命令均不打开数据库。`schema` 使用 `mode=ro`、`query_only` 和 SQL 授权器，
 只执行 `table_list`、`table_xinfo` 结构检查；不存在的库直接报错，不创建新库。
@@ -133,6 +177,23 @@ Q1～Q4表示按账号抽数划分的四组；组内P25/P50/P75与IQR另行解�
 ```powershell
 python -m genshin_insight defense --analysis .\image\analysis_20261019_final --output .\reports\defense_20261019_final --replace
 ```
+
+## 可交互数据大屏
+
+从已发布的受保护ADS制作16:9离线大屏，并启动本机展示：
+
+```powershell
+$env:PYTHONPATH = 'src;.'
+python -m genshin_insight dashboard --serve
+```
+
+终端打印本机浏览地址，默认 `http://127.0.0.1:8765/`。生成目录在 `reports/dashboard_<时间>/`，
+其中 `index.html` 内嵌字体、图表、交互脚本及必要聚合，可单独复制并双击离线打开。
+大屏使用蓝粉主题，卡池选择联动规模、月度趋势和五星观察；月份仅筛选月度图。
+星期小时、账号分布和前12个原始名称榜保持全局口径。抑制格保留缺口，不插值、不补零、不回推。
+
+支持名称搜索与排序、图表数值提示、详情放大、全屏与8秒卡池轮播。
+快捷键为 `F` 全屏、`P` 开始/暂停轮播、`R` 复位、`Esc` 关闭详情。详见[大屏说明](docs/可交互数据大屏.md)。
 
 ## 答辩开场视频
 

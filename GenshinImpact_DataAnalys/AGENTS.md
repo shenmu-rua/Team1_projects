@@ -50,6 +50,8 @@
 | 统一命令入口 | `src/genshin_insight/__main__.py` | 第 2、3 条；子命令按需本地import，不在根目录保留包装脚本 |
 | 图集调度 | `src/genshin_insight/charts.py` | 第 2、3 条；用户要求本地 import |
 | HTML答辩制作 | `src/genshin_insight/defense.py` | 第 2、12 条；复用已发布ADS |
+| 离线交互大屏构建与本机服务 | `src/genshin_insight/dashboard.py` | 第 2、3 条；只读已发布受保护ADS，不连接库 |
+| 大屏版式、样式与浏览器交互 | `src/genshin_insight/viz/dashboard.html`、`dashboard.css`、`dashboard.js` | 第 2、12 条；颜色复用主题及固定卡池映射；各筛选标清范围 |
 | 完整逐页口播与术语说明 | `src/genshin_insight/speech.py` | 第 2 条；内容与演示版式分别维护 |
 | 开场片制作调度、视频与原声裁切 | `src/genshin_insight/opener.py` | 第 2、3 条；只复用发布ADS，本地import |
 | 启动标识拼接及首页匹配 | `src/genshin_insight/opener_transition.py`、`viz/opener_transition.html`、`render_transition.cjs` | 第 2、3 条；只读指定素材与现有首页，既有开场直接拼接 |

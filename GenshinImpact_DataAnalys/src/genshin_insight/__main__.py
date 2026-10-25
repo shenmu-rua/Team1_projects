@@ -23,6 +23,7 @@ def main(argv: list[str] | None = None) -> int:
         "opener": "用指定原声视频制作答辩开场片",
         "opener-transition": "拼接启动标识并衔接现有答辩首页",
         "report": "按Word模板导出分析报告",
+        "dashboard": "从受保护聚合制作离线交互大屏并启动本机展示",
     }
     if arguments and arguments[0] in delegated:
         return import_module(f".{arguments[0].replace('-', '_')}", __package__).main(arguments[1:])
